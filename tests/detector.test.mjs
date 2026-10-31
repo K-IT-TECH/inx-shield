@@ -1,0 +1,16 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {analyze,MAX_LENGTH} from '../src/detector.js';
+import {samples} from '../src/i18n.js';
+for(const [name,verdict] of [['bank','scam'],['prize','scam'],['ad','promotion'],['normal','low']])for(const [lang,input]of samples[name].entries())test(`${name} sample (${lang?'Tamil':'English'})`,()=>assert.equal(analyze(input).verdict,verdict));
+test('OTP request triggers scam',()=>assert.equal(analyze('Please share your OTP so we can help you.').verdict,'scam'));
+test('Negated OTP safety advice is not an OTP request',()=>assert.equal(analyze('Never share your OTP with anyone.').verdict,'low'));
+test('Tamil negated advice',()=>assert.equal(analyze('OTP யாரிடமும் பகிர வேண்டாம்.').verdict,'low'));
+test('Normal schedule is not urgent fraud',()=>assert.equal(analyze('Please call me immediately about our dinner reservation.').verdict,'low'));
+test('Short content is uncertain',()=>assert.equal(analyze('hi').verdict,'unclear'));
+test('Invalid types and excessive input are rejected',()=>{assert.throws(()=>analyze(null),TypeError);assert.throws(()=>analyze('a'.repeat(MAX_LENGTH+1)),RangeError);});
+test('Unicode zero-width obfuscation still detects OTP requests',()=>assert.equal(analyze('Please sh\u200bare your O\u200bTP right now.').verdict,'scam'));
+test('Normal URLs alone are not labelled scams',()=>assert.equal(analyze('Your appointment details are at https://clinic.example/details').verdict,'low'));
+test('URL credentials are suspicious and only hostname is returned',()=>{const r=analyze('Pay processing fee now: https://bank.example@attacker.example/account?secret=123');assert.ok(r.reasons.includes('unusual_link'));assert.deepEqual(r.links,['attacker.example']);assert.ok(!JSON.stringify(r).includes('secret'));});
+test('Malicious markup stays plain text in analysis output',()=>{const r=analyze('<script>alert(1)</script> hello world');assert.ok(!JSON.stringify(r).includes('<script>'));});
+test('Short links do not independently imply fraud',()=>assert.notEqual(analyze('Here is the school newsletter https://bit.ly/abcd').verdict,'scam'));
+test('No message bodies or numeric confidence in result',()=>{const r=analyze('A private lunch message with a friend');assert.deepEqual(Object.keys(r).sort(),['links','reasons','verdict','version']);});
