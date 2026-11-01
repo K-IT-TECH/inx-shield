@@ -11,8 +11,20 @@
 ## Verification / delivery pending
 - [x] Build and 20 detector tests pass; desktop + 390px-frame Tamil UI checked, device-history save verified
 - [x] Transactional SQL test passed: owner insert/read/delete; cross-owner insert/read/delete blocked; anon SELECT and authenticated UPDATE denied
-- [ ] GitHub source upload and Vercel production verification
-- [ ] Separate pull requests for campus-pulse, focus-orbit, contrast-studio, snippet-atlas, apply-flow, split-trail, Restaurant_Website and Assesment-Web
+- [x] GitHub source uploaded and Vercel production verified on 1 November 2026: https://inx-shield.vercel.app/ (project prj_MM0emrzIm0mW4YvQTN42E2ZYY2KN, deployment dpl_EPbaAwYqhnXUqAiE7ho6CHo2a766, source 0e05c53d6563bcae9140891c9a3b5d2278681775). Live English scam/promotion examples and Tamil everyday-message result checked. HTML, JS, CSS, manifest and extension ZIP returned HTTP 200 and matched the local build; ZIP integrity passed. Cloud sign-in was not retested without a pilot account.
+- [x] campus-pulse: https://github.com/K-IT-TECH/campus-pulse/pull/1 (open; no merge)
+- [x] focus-orbit: https://github.com/K-IT-TECH/focus-orbit/pull/1 (open; no merge)
+- [x] contrast-studio: https://github.com/K-IT-TECH/contrast-studio/pull/1 (open; no merge)
+- [ ] snippet-atlas: finish/publish tested storage-validation and offline-refresh PR
+- [ ] apply-flow: finish/publish tested storage-validation and offline-refresh PR
+- [ ] split-trail: finish/publish tested storage-validation and offline-refresh PR
+- [ ] Restaurant_Website: bounded accessible filter controls PR
+- [ ] Assesment-Web: root entry point / literal MCQ text rendering PR
+
+## Continuation notes — 1 November 2026
+- Existing PRs above use `fix/storage-validation-offline-refresh`; check their current state before further work. A separate `codex/storage-recovery-offline` branch in campus-pulse also contains prepared tests, but do not open a duplicate PR for it.
+- A previous PR-create attempt was stopped by automatic approval review because of a usage limit. No alternate route was used to bypass that block.
+- Workspace maintenance removed local work; recover source from GitHub branches. Prior locally tested but unpublished changes for other repositories may need reconstruction and fresh tests. Preserve progress after each published PR.
 
 ## Requires account/device setup before wider rollout
 - Public cloud registration and recovery need SMTP/auth configuration; no public signup is currently offered.
