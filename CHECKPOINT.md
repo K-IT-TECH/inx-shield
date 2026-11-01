@@ -17,7 +17,7 @@
 - [x] contrast-studio: https://github.com/K-IT-TECH/contrast-studio/pull/1 (open; no merge)
 - [x] snippet-atlas: https://github.com/K-IT-TECH/snippet-atlas/pull/1 (8 Node regression tests passed; open, no merge)
 - [x] apply-flow: https://github.com/K-IT-TECH/apply-flow/pull/1 (8 Node regression tests passed; open, no merge)
-- [ ] split-trail: finish/publish tested storage-validation and offline-refresh PR
+- [x] split-trail: https://github.com/K-IT-TECH/split-trail/pull/1 (8 Node regression tests passed; open, no merge)
 - [ ] Restaurant_Website: bounded accessible filter controls PR
 - [ ] Assesment-Web: root entry point / literal MCQ text rendering PR
 
