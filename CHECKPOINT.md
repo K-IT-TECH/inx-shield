@@ -18,7 +18,7 @@
 - [x] snippet-atlas: https://github.com/K-IT-TECH/snippet-atlas/pull/1 (8 Node regression tests passed; open, no merge)
 - [x] apply-flow: https://github.com/K-IT-TECH/apply-flow/pull/1 (8 Node regression tests passed; open, no merge)
 - [x] split-trail: https://github.com/K-IT-TECH/split-trail/pull/1 (8 Node regression tests passed; open, no merge)
-- [ ] Restaurant_Website: bounded accessible filter controls PR
+- [x] Restaurant_Website: https://github.com/K-IT-TECH/Restaurant_Website/pull/1 (tested bounded fix; open, no merge)
 - [ ] Assesment-Web: root entry point / literal MCQ text rendering PR
 
 ## Continuation notes — 1 November 2026
