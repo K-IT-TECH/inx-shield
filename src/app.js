@@ -2,8 +2,10 @@ import { createClient } from '@supabase/supabase-js';
 import { analyze, REASONS, ENGINE_VERSION } from './detector.js';
 import { ta, labels, descriptions, actions, samples } from './i18n.js';
 import { SUPABASE_URL, SUPABASE_KEY } from './config.js';
+import { connectSharing } from './share.js';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 let lang='en', result=null, toastTimer, installPrompt, account=null, cloudRows=[];
+try { if(localStorage.getItem('inx-shield-language')==='ta')lang='ta'; } catch { /* Language still works without storage. */ }
 const t=(en,ta)=>lang==='ta'?ta:en, pick=a=>a[lang==='ta'?1:0];
 const original=new Map($$('[data-i18n]').map(el=>[el,el.innerHTML]));
 const toast=text=>{ $('#toast').textContent=text; clearTimeout(toastTimer); toastTimer=setTimeout(()=>$('#toast').textContent='',6500); };
@@ -17,7 +19,7 @@ function renderHistory(){const box=$('#history-list');box.replaceChildren();cons
 function renderResult(){if(!result)return;$('#result-empty').hidden=true;$('#result-content').hidden=false;$('#verdict-box').className='verdict '+result.verdict;$('#verdict-kicker').textContent=t('Your message check','உங்கள் message சோதனை');$('#verdict-title').textContent=pick(labels[result.verdict]);$('#verdict-copy').textContent=pick(descriptions[result.verdict]);$('#next-copy').textContent=pick(actions[result.verdict]);$('#reasons').replaceChildren();const reasons=result.reasons.length?result.reasons.map(k=>pick(REASONS[k])):[t('No supported warning patterns found in this text.','இந்த text-ல் ஆதரிக்கப்படும் எச்சரிக்கை அறிகுறிகள் தெரியவில்லை.')];if(result.verdict==='unclear')reasons.splice(0,reasons.length,t('The message is too short to give useful context.','போதுமான தகவல் பெற message மிகவும் குறுகியதாக உள்ளது.'));for(const reason of reasons){const li=document.createElement('li');li.textContent=reason;$('#reasons').append(li);}$('#link-details').hidden=!result.links.length;$('#link-list').replaceChildren();for(const host of result.links){const li=document.createElement('li');li.textContent=host;$('#link-list').append(li);}$('#save-cloud').disabled=false;}
 function resetResult(){result=null;$('#result-empty').hidden=false;$('#result-content').hidden=true;$('#input-error').textContent='';$('#save-cloud').disabled=true;if('speechSynthesis'in window)speechSynthesis.cancel();}
 function updateCount(){$('#char-count').textContent=`${$('#message').value.length.toLocaleString()} / 12,000`;}
-function setLanguage(value){lang=value;document.documentElement.lang=value;for(const [el,en] of original){if(lang==='ta')el.textContent=ta[el.dataset.i18n]||el.textContent;else el.innerHTML=en;}$('#message').placeholder=t('Paste a message you’re unsure about…','சந்தேகமான message-ஐ இங்கே paste செய்யுங்கள்…');renderResult();renderHistory();renderCloud();if('speechSynthesis'in window)speechSynthesis.cancel();}
+function setLanguage(value){lang=value;$('#language').value=value;try{localStorage.setItem('inx-shield-language',value);}catch{}document.documentElement.lang=value;for(const [el,en] of original){if(lang==='ta')el.textContent=ta[el.dataset.i18n]||el.textContent;else el.innerHTML=en;}$('#message').placeholder=t('Paste a message you’re unsure about…','சந்தேகமான message-ஐ இங்கே paste செய்யுங்கள்…');renderResult();renderHistory();renderCloud();if('speechSynthesis'in window)speechSynthesis.cancel();}
 $('#language').addEventListener('change',e=>setLanguage(e.target.value));
 $('#message').addEventListener('input',()=>{updateCount();resetResult();});$('#source').addEventListener('change',resetResult);
 $('#clear').addEventListener('click',()=>{$('#message').value='';resetResult();updateCount();$('#message').focus();});
@@ -35,5 +37,27 @@ $('#refresh-cloud').addEventListener('click',async()=>{try{await loadCloud();toa
 $('#sign-out').addEventListener('click',async()=>{const {error}=await supabase.auth.signOut({scope:'local'});if(error){toast(t('Could not sign out. Please retry.','Sign out செய்ய முடியவில்லை. மீண்டும் முயற்சியுங்கள்.'));return;}account=null;cloudRows=[];renderCloud();$('#cloud-status').textContent=t('Signed out on this device.','இந்த சாதனத்தில் sign out செய்யப்பட்டது.');});
 if(supabase){supabase.auth.getSession().then(async({data})=>{account=data.session?.user||null;renderCloud();if(account)try{await loadCloud();}catch{ $('#cloud-status').textContent=t('Cloud history could not be loaded. Retry when online.','Cloud history பெற முடியவில்லை. இணையம் வந்ததும் முயற்சியுங்கள்.');}}).catch(()=>{});supabase.auth.onAuthStateChange((_event,session)=>{account=session?.user||null;if(!account)cloudRows=[];renderCloud();});}
 window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installPrompt=event;});$('#install').addEventListener('click',async()=>{if(installPrompt){await installPrompt.prompt();installPrompt=null;}else $('#install-dialog').showModal();});$('#close-install').addEventListener('click',()=>$('#install-dialog').close());
-if('serviceWorker'in navigator){navigator.serviceWorker.register('/sw.js').catch(()=>{});navigator.serviceWorker.addEventListener('message',event=>{if(event.data?.type==='SHARED_MESSAGE'&&typeof event.data.text==='string'){$('#message').value=event.data.text.slice(0,12000);resetResult();updateCount();toast(t('Shared text is ready. Review it, remove secrets, then tap Check.','Share செய்த text தயாராக உள்ளது. ரகசிய எண்களை நீக்கிவிட்டு சரிபார் அழுத்துங்கள்.'));$('#checker').scrollIntoView();}if(event.data?.type==='SHARE_MISSING')toast(t('The shared message expired. Please share it again or paste it here.','Share செய்த message காலாவதியானது. மீண்டும் share அல்லது paste செய்யுங்கள்.'));});const id=new URL(location.href).searchParams.get('share');if(id){history.replaceState(null,'',location.pathname);navigator.serviceWorker.ready.then(()=>{const sw=navigator.serviceWorker.controller;if(sw)sw.postMessage({type:'GET_SHARE',id});else toast(t('Please paste your message here. Sharing needs the installed app.','இங்கே message-ஐ paste செய்யுங்கள். Share-க்கு installed app தேவை.'));});}}
-renderHistory();renderCloud();
+connectSharing({
+  language:()=>lang,
+  onNotice:message=>{$('#share-status').textContent=message;toast(message);},
+  onMessage:text=>{
+    $('#message').value=text;resetResult();updateCount();
+    toast(t('Shared text is ready. Review it, remove secrets, then tap Check.','Share செய்த text தயாராக உள்ளது. ரகசிய எண்களை நீக்கிவிட்டு சரிபார் அழுத்துங்கள்.'));
+    $('#checker').scrollIntoView();$('#message').focus({preventScroll:true});
+  }
+});
+$('#test-share').addEventListener('click',()=>{
+  if(!('serviceWorker' in navigator)){
+    $('#share-status').textContent=t('This browser cannot receive shared messages here. Open the live site in Chrome, or paste your message above.','இந்த browser-ல் இங்கே share செய்ய முடியவில்லை. Live site-ஐ Chrome-ல் திறக்கவும் அல்லது மேலே message-ஐ paste செய்யவும்.');
+    return;
+  }
+  if(!navigator.serviceWorker?.controller){
+    $('#share-status').textContent=t('Open or refresh this page once, then try again. Copy and paste is always available.','இந்தப் பக்கத்தை மீண்டும் திறந்து அல்லது refresh செய்து முயற்சியுங்கள். Copy–paste எப்போதும் பயன்படுத்தலாம்.');
+    return;
+  }
+  if($('#message').value.trim()&&!confirm(t('Replace your current message with a harmless sample?','தற்போதைய message-க்கு பதிலாக ஒரு மாதிரி message-ஐ வைக்கவா?')))return;
+  $('#share-test-text').value=t('INX Shield connection test. Hi, I will be home at 6. Shall we have dinner together?','INX Shield இணைப்பு சோதனை. வணக்கம், நான் மாலை 6 மணிக்கு வீட்டுக்கு வருகிறேன். சேர்ந்து சாப்பிடலாமா?');
+  $('#share-test-form').submit();
+});
+setLanguage(lang);
+

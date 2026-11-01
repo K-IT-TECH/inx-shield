@@ -1,1 +1,12 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>INX Shield</title><link rel="stylesheet" href="popup.css"></head><body><header><h1>INX Shield</h1><label>Language <select id="lang"><option value="en">English</option><option value="ta">தமிழ்</option></select></label></header><p id="intro">A second look before you click. Your message stays on this device.</p><button id="capture">Use selected text / opened Gmail message</button><label for="text" id="label">Review the message or paste one below</label><textarea id="text" rows="7" maxlength="12000"></textarea><button id="check" class="primary">Check message</button><p id="error" role="alert"></p><section id="result" hidden aria-live="polite"><h2 id="title"></h2><p id="description"></p><ul id="reasons"></ul><h3 id="next-title">Next step</h3><p id="next"></p></section><p class="note" id="note">Rule-based guidance, not a guarantee. No sender verification, automatic inbox scanning, or message uploads.</p><script src="popup.js"></script></body></html>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>INX Shield</title><link rel="stylesheet" href="popup.css"></head>
+<body><header><h1>INX Shield</h1><label>Language / மொழி <select id="lang"><option value="en">English</option><option value="ta">தமிழ்</option></select></label></header>
+<p id="intro">A second look before you click. Your message stays on this device.</p>
+<button id="capture">Use selected text / opened Gmail message</button>
+<p id="capture-status" role="status"></p>
+<label for="text" id="label">Review the message or paste one below</label><textarea id="text" rows="7" maxlength="12000" aria-describedby="note"></textarea>
+<details id="links" hidden><summary id="links-title">Link destinations (not opened)</summary><ul id="link-list"></ul><p id="links-note">Names only. Redirects, attachments and sender identity are not verified.</p></details>
+<button id="check" class="primary">Check message</button><p id="error" role="alert"></p>
+<section id="result" hidden aria-live="polite" tabindex="-1" aria-labelledby="title"><h2 id="title"></h2><p id="description"></p><ul id="reasons"></ul><h3 id="next-title">Next step</h3><p id="next"></p></section>
+<p class="note" id="note">Rule-based guidance, not a guarantee. No automatic inbox scanning or message uploads. Pasted text cannot reveal hidden links.</p>
+<script src="popup.js"></script></body></html>

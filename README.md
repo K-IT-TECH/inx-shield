@@ -8,7 +8,7 @@ A clean, accessible English/Tamil message checker. People can paste a suspicious
 - Accessible responsive interface, keyboard navigation, screen-reader labels, reduced-motion support, read aloud when the device has a suitable voice, and practical help.
 - Optional device history and JSON export. Saves only verdict, source, time and rule IDs; never message bodies, OTPs, email addresses, phone numbers or links.
 - Installable offline PWA. Android Chrome can share selected text from a compatible messaging app into Shield. Review the shared message and press Check.
-- Chrome/Edge extension: selected text first, or the last visible opened Gmail message. Captures only on button press using `activeTab` and `scripting`, with no persistent host permissions. Capture can vary as Gmail changes; paste is always available.
+- Chrome/Edge extension: selected text first, or one unambiguous opened Gmail message, including web-link destinations behind labels. Multiple expanded messages require a selection. Captures only on button press using `activeTab` and `scripting`, with no persistent host permissions. Capture can vary as Gmail changes; paste is always available.
 - Supabase/PostgreSQL table and authenticated private cloud history for existing pilot accounts, protected by ownership RLS. Public registration is deliberately not offered until email delivery and account recovery are configured.
 
 ## Run
@@ -25,13 +25,15 @@ Serve `dist/` with a static server for development. Vercel uses the checked-in b
 
 ## Phone integration
 
-Android Chrome: install from the browser menu, open the installed app once, select a message in an app that supports sharing, choose Share → INX Shield. Not all SMS apps expose Share; copy/paste is the fallback. The service worker keeps a shared message in memory for up to 60 seconds, removes it when read, and puts only a random ID in the redirect URL. If the worker is stopped, the user is asked to share again. Do not send actual secrets.
+Android Chrome: install from the browser menu, open the installed app once, select a message in an app that supports sharing, choose Share → INX Shield. Not all SMS apps expose Share; copy/paste is the fallback. The service worker keeps a shared message in memory for up to 60 seconds, removes it when read, and puts only a random ID in the redirect URL. If the worker is stopped, the user is asked to share again. Do not send actual secrets. The Connect section includes a harmless sample handoff test; this exercises the browser worker and form delivery, not the physical Android Share menu. Missing/expired shares, unsupported browsers and startup timeouts offer copy/paste guidance. Shared text over 12,000 characters is rejected without a partial result. Language preference is retained locally between visits.
 
 iOS: add to Home Screen if desired; use copy/paste. **This is not a native SMS inbox reader.** Automatic filtering needs a separate native app, OS permissions and applicable store approval. WebOTP is not a general SMS-reading API.
 
+See [device setup and acceptance checks](docs/DEVICE_SETUP.md) for a short English/Tamil walkthrough.
+
 ## Gmail integration
 
-Build, then unzip `dist/inx-shield-extension.zip`. In `chrome://extensions` or `edge://extensions`, enable Developer mode and choose Load unpacked. Select the extracted folder. Open an email, select its text, click INX Shield, then Use selected text. Review the captured text and check it. This developer preview is not yet submitted to the Chrome/Edge stores. Chrome extension code is local and makes no network requests. It does not connect to Gmail OAuth or automatically scan all mail.
+Build, then unzip `dist/inx-shield-extension.zip`. In `chrome://extensions` or `edge://extensions`, enable Developer mode and choose Load unpacked. Select the extracted folder. Open an email, select its text, click INX Shield, then Use selected text. Review the captured text and link names, then check it. Differing displayed and destination hosts produce a caution explanation; legitimate tracking links can also differ. No URLs are opened. Editing captured text resets hidden-link context and explains that only the edited text is checked. Messages over 12,000 characters or captures with over 20 links are rejected instead of silently truncated. Link paths, queries, fragments and credentials are discarded during capture. This developer preview is not yet submitted to the Chrome/Edge stores. Chrome extension code is local and makes no network requests. It does not connect to Gmail OAuth or automatically scan all mail.
 
 ## Database and privacy
 
@@ -47,7 +49,7 @@ This is an **explainable rule-based detector**, not a trained machine-learning m
 
 ## Verification
 
-`npm test` covers arbitrary messages, bilingual samples, negation, benign links, unsafe URL forms, Unicode obfuscation, input limits and privacy of outputs. Build creates the website, PWA assets and extension ZIP without external CDN dependencies. See `CHECKPOINT.md` for deployment, database checks and outstanding physical-device tests.
+`npm test` covers arbitrary messages, bilingual samples, negation, benign links, unsafe URL forms, Unicode obfuscation, input limits, copied extension capture functions, hidden-link mismatches, ambiguous email selection, one-use/expired share delivery, worker startup failure, offline navigation and query-free cache keys. Build creates the website, PWA assets and extension ZIP without external CDN dependencies. See `CHECKPOINT.md` for deployment, database checks and outstanding physical-device tests.
 
 The earlier inline mockup was not present in the resumed workspace. This repository contains the implemented version of that design; it does not claim to contain an exact archival copy of the lost preview file.
 
@@ -60,3 +62,4 @@ The earlier inline mockup was not present in the resumed workspace. This reposit
 - [India cybercrime reporting](https://cybercrime.gov.in/)
 
 Built for Kavin RB / K-IT-TECH.
+

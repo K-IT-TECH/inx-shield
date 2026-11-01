@@ -1,1 +1,2 @@
-{"manifest_version":3,"name":"INX Shield — message check","version":"1.0.0","description":"Check selected text or an opened Gmail message locally, with English and Tamil explanations.","permissions":["activeTab","scripting"],"action":{"default_popup":"popup.html","default_title":"Check with INX Shield"},"icons":{"128":"icon-128.png"}}
+{"manifest_version":3,"name":"INX Shield — message check","version":"1.1.0","description":"Check selected text, an opened Gmail message and its web-link destinations locally in English or Tamil.","permissions":["activeTab","scripting"],"action":{"default_popup":"popup.html","default_title":"Check with INX Shield"},"icons":{"128":"icon-128.png"}}
+

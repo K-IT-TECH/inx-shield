@@ -1,4 +1,4 @@
-export const ENGINE_VERSION = 'rules-1.0.0';
+export const ENGINE_VERSION = 'rules-1.1.0';
 export const MAX_LENGTH = 12000;
 
 // Explainable signals, not a trained classifier or a guarantee of safety.
@@ -27,11 +27,12 @@ export const REASONS = {
   promotion: ['Looks like an advertisement or offer','விளம்பரம் அல்லது சலுகை போலத் தெரிகிறது']
 };
 
-export function analyze(input) {
+export function analyze(input, {links:capturedLinks=[]} = {}) {
   if (typeof input !== 'string') throw new TypeError('Message must be text');
   if (input.length > MAX_LENGTH) throw new RangeError('Message exceeds 12,000 characters');
   const text = input.normalize('NFKC').replace(/[\u200B-\u200D\uFEFF]/g,'').trim();
-  if (text.length < 12) return {verdict:'unclear', reasons:[], links:[], version:ENGINE_VERSION};
+  if (!Array.isArray(capturedLinks) || capturedLinks.length > 20 || capturedLinks.some(link => typeof link !== 'string' || link.length > 2048)) throw new TypeError('Invalid captured links');
+  if (text.length < 12 && !capturedLinks.length) return {verdict:'unclear', reasons:[], links:[], version:ENGINE_VERSION};
   // Ignore explicit safety advice when evaluating secret-sharing requests.
   const withoutAdvice = text.split(/[.!?\n]+/u).filter(s => !/(?:\b(?:never|do not|don't|dont)\b.{0,25}(?:share|send|give|tell)|பகிர வேண்டாம்|பகிராதீ|அனுப்பாதீ)/iu.test(s)).join('. ');
   let score = 0; const reasons = [];
@@ -40,11 +41,12 @@ export function analyze(input) {
       reasons.push(rule.id); score += rule.weight;
     }
   }
-  const urls = text.match(/(?:https?:\/\/|www\.)[^\s<>"']+/giu) || [];
+  const urls = [...capturedLinks, ...(text.match(/(?:https?:\/\/|www\.)[^\s<>"']+/giu) || [])];
   const links = [];
   for (const raw of urls.slice(0,20)) {
     try {
       const url = new URL(raw.startsWith('www.') ? `https://${raw}` : raw);
+      if (!['http:', 'https:'].includes(url.protocol)) continue;
       const host = url.hostname;
       links.push(host); // Never fetch, render as a link, or retain path/query.
       if (/^(?:bit\.ly|tinyurl\.com|t\.co|cutt\.ly|rb\.gy|shorturl\.at)$/i.test(host) && !reasons.includes('short_link')) { reasons.push('short_link'); score += 1; }
@@ -53,6 +55,7 @@ export function analyze(input) {
   }
   if (links.length) { reasons.push('link'); score += 1; }
   const dangerous = reasons.includes('credentials') || (reasons.includes('prize') && reasons.includes('payment')) || (reasons.includes('remote') && score >= 4) || score >= 6;
-  const verdict = dangerous ? 'scam' : score >= 3 ? 'caution' : reasons.includes('promotion') ? 'promotion' : 'low';
+  const verdict = dangerous ? 'scam' : score >= 3 ? 'caution' : text.length < 12 ? 'unclear' : reasons.includes('promotion') ? 'promotion' : 'low';
   return { verdict, reasons:[...new Set(reasons)], links:[...new Set(links)], version:ENGINE_VERSION };
 }
+

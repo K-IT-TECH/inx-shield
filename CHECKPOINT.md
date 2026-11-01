@@ -1,5 +1,17 @@
 # Delivery checkpoint
 
+## Follow-up 1.1.0 — 1 November 2026
+
+- User requested continuation after the initial handoff. This update focuses on the existing Gmail/SMS connection flow.
+- Gmail extension now includes underlying HTTP(S) destinations, shows host mismatches without opening links, and strips URL paths, queries, fragments and credentials from captured link metadata. Selected text takes priority; multiple expanded emails require selection.
+- Overlength captures/shares are rejected rather than silently truncated. Editing captured email text clears stale link context and results. Extension permissions remain activeTab and scripting.
+- Added a harmless sample-share button, explicit share startup/expiry/unsupported-browser fallbacks, query-free offline cache keys, correct missing-asset behavior and persistent English/Tamil preference.
+- Added docs/DEVICE_SETUP.md with English/Tamil setup, extension update instructions and physical-device acceptance checks.
+- Verification: 47 Node tests pass, including bundled popup/copy-function execution and share request-to-delivery fixtures. Build and extension ZIP integrity pass. Desktop UI checked for scam result, Tamil everyday result and language persistence.
+- Live deployment and HTTPS sample handoff verification: pending this continuation.
+- Eight existing project PRs rechecked: all open and unmerged. No duplicate PRs or database/auth changes in this update. Continuation automation remains paused.
+
+
 ## Implemented
 - [x] English/Tamil checker and educational/help UI
 - [x] Explainable local detector, device history and export
@@ -37,3 +49,4 @@
 - Earlier exact inline mockup file was absent after workspace reset; current design is implemented but the old file cannot be truthfully archived without its source.
 
 Scheduled continuation should read this file and the eight repositories, finish only unchecked authorized delivery items, avoid duplicating PRs or deploying unrelated changes, and disable itself when no actionable work remains. Never promise quota resets or bypass provider limits. Do not activate paid plans or publish extension-store listings without user direction.
+
