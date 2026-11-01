@@ -19,7 +19,7 @@
 - [x] apply-flow: https://github.com/K-IT-TECH/apply-flow/pull/1 (8 Node regression tests passed; open, no merge)
 - [x] split-trail: https://github.com/K-IT-TECH/split-trail/pull/1 (8 Node regression tests passed; open, no merge)
 - [x] Restaurant_Website: https://github.com/K-IT-TECH/Restaurant_Website/pull/1 (tested bounded fix; open, no merge)
-- [ ] Assesment-Web: root entry point / literal MCQ text rendering PR
+- [x] Assesment-Web: https://github.com/K-IT-TECH/Assesment-Web/pull/1 (tested bounded fix; open, no merge)
 
 ## Continuation notes — 1 November 2026
 - Existing PRs above use `fix/storage-validation-offline-refresh`; check their current state before further work. A separate `codex/storage-recovery-offline` branch in campus-pulse also contains prepared tests, but do not open a duplicate PR for it.
