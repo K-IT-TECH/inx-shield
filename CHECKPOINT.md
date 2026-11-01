@@ -15,7 +15,7 @@
 - [x] campus-pulse: https://github.com/K-IT-TECH/campus-pulse/pull/1 (open; no merge)
 - [x] focus-orbit: https://github.com/K-IT-TECH/focus-orbit/pull/1 (open; no merge)
 - [x] contrast-studio: https://github.com/K-IT-TECH/contrast-studio/pull/1 (open; no merge)
-- [ ] snippet-atlas: finish/publish tested storage-validation and offline-refresh PR
+- [x] snippet-atlas: https://github.com/K-IT-TECH/snippet-atlas/pull/1 (8 Node regression tests passed; open, no merge)
 - [ ] apply-flow: finish/publish tested storage-validation and offline-refresh PR
 - [ ] split-trail: finish/publish tested storage-validation and offline-refresh PR
 - [ ] Restaurant_Website: bounded accessible filter controls PR
