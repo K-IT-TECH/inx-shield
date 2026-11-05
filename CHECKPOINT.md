@@ -8,7 +8,9 @@
 - Added a harmless sample-share button, explicit share startup/expiry/unsupported-browser fallbacks, query-free offline cache keys, correct missing-asset behavior and persistent English/Tamil preference.
 - Added docs/DEVICE_SETUP.md with English/Tamil setup, extension update instructions and physical-device acceptance checks.
 - Verification: 47 Node tests pass, including bundled popup/copy-function execution and share request-to-delivery fixtures. Build and extension ZIP integrity pass. Desktop UI checked for scam result, Tamil everyday result and language persistence.
-- Live deployment and HTTPS sample handoff verification: pending this continuation.
+- Live verification completed on 5 November 2026. Vercel production deployment dpl_A3URmBa3bABuX9nNVo8uRPVnDrjB is READY at https://inx-shield.vercel.app/, built from source commit 0a8286e9f5901225a61eccfe0ca2f9acb89ee184. The HTTPS sample-share form delivered the full English and Tamil messages into the checker; both produced the expected no-obvious-warning-signs result after an explicit Check action. Tamil preference survived the share navigation. The live bank-alert sample produced the expected likely-scam result.
+- Deployed extension manifest returned HTTP 200 with version 1.1.0 and only activeTab/scripting permissions. Real Gmail installation and Android OS share-sheet acceptance remain device tests; the in-browser sample is not certification of them.
+- The prior browser check was interrupted by an automatic approval-review usage-limit error. Verification resumed successfully after the user's continuation request; no bypass or alternate browser route was used.
 - Eight existing project PRs rechecked: all open and unmerged. No duplicate PRs or database/auth changes in this update. Continuation automation remains paused.
 
 
