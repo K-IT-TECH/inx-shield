@@ -1,5 +1,14 @@
 # Delivery checkpoint
 
+## Follow-up 1.2.0 — 7 November 2026
+
+- Saved checks now reopen their recorded warning categories and next-step guidance in English or Tamil. They are clearly labelled as saved guidance, not a fresh analysis; original messages and link addresses remain unavailable.
+- Device history supports combined result/source filters, result counts, a clear no-match state, filter reset and individual deletion. Export all always includes every saved summary, regardless of filters. The newest 100 summaries are retained; changes in another tab refresh the list.
+- Read/write normalization rebuilds records from allowed summary fields, rejects corrupt rows and inherited object keys, removes duplicate IDs/categories and keeps legacy summaries. Unknown extra fields cannot enter JSON exports.
+- Existing pilot cloud rows use the same detail presentation and normalization. No authentication, database, RLS or permission changes. The detector and extension remain version 1.1.0; the web app is 1.2.0.
+- Validation: 55 Node tests pass; production build and extension ZIP integrity pass. Browser checks cover save, bilingual details, combined/no-match filters, language persistence, reload, single deletion and a downloaded JSON export with both summaries while one was filtered. A 390px frame (375px content viewport) has no horizontal overflow in Tamil. No app-origin browser errors were observed.
+- See docs/HISTORY_VERIFICATION.md for the feature-specific checks. Physical Android/Gmail acceptance and public account onboarding remain separate rollout work.
+
 ## Follow-up 1.1.0 — 1 November 2026
 
 - User requested continuation after the initial handoff. This update focuses on the existing Gmail/SMS connection flow.

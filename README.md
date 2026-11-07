@@ -6,7 +6,7 @@ A clean, accessible English/Tamil message checker. People can paste a suspicious
 
 - Real local analysis of arbitrary text with explainable English, Tamil and some Tanglish rules. Five results: likely scam, caution, promotional, no obvious warning signs, insufficient context.
 - Accessible responsive interface, keyboard navigation, screen-reader labels, reduced-motion support, read aloud when the device has a suitable voice, and practical help.
-- Optional device history and JSON export. Saves only verdict, source, time and rule IDs; never message bodies, OTPs, email addresses, phone numbers or links.
+- Optional device history: reopen saved reasons and next steps, combine result/source filters, delete individual summaries, and export all saved checks as JSON. Keeps the latest 100 summaries. Saves only verdict, source, time, rule IDs and engine version; never message bodies, OTPs, email addresses, phone numbers or links.
 - Installable offline PWA. Android Chrome can share selected text from a compatible messaging app into Shield. Review the shared message and press Check.
 - Chrome/Edge extension: selected text first, or one unambiguous opened Gmail message, including web-link destinations behind labels. Multiple expanded messages require a selection. Captures only on button press using `activeTab` and `scripting`, with no persistent host permissions. Capture can vary as Gmail changes; paste is always available.
 - Supabase/PostgreSQL table and authenticated private cloud history for existing pilot accounts, protected by ownership RLS. Public registration is deliberately not offered until email delivery and account recovery are configured.
@@ -49,7 +49,7 @@ This is an **explainable rule-based detector**, not a trained machine-learning m
 
 ## Verification
 
-`npm test` covers arbitrary messages, bilingual samples, negation, benign links, unsafe URL forms, Unicode obfuscation, input limits, copied extension capture functions, hidden-link mismatches, ambiguous email selection, one-use/expired share delivery, worker startup failure, offline navigation and query-free cache keys. Build creates the website, PWA assets and extension ZIP without external CDN dependencies. See `CHECKPOINT.md` for deployment, database checks and outstanding physical-device tests.
+`npm test` covers arbitrary messages, bilingual samples, negation, benign links, unsafe URL forms, Unicode obfuscation, input limits, copied extension capture functions, hidden-link mismatches, ambiguous email selection, one-use/expired share delivery, worker startup failure, offline navigation, query-free cache keys, history filtering/deletion, legacy records, storage failures and summary-only exports. Build creates the website, PWA assets and extension ZIP without external CDN dependencies. See [history update verification](docs/HISTORY_VERIFICATION.md) and `CHECKPOINT.md` for delivery evidence and outstanding physical-device tests.
 
 The earlier inline mockup was not present in the resumed workspace. This repository contains the implemented version of that design; it does not claim to contain an exact archival copy of the lost preview file.
 
