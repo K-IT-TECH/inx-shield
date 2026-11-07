@@ -2,6 +2,8 @@
 
 Verified 7 November 2026.
 
+Production: https://inx-shield.vercel.app/ — deployment `dpl_CfP1SV8tfry5jeTDpL4Yeey4rtXw`, source commit `32e397c0d0a91411a38ad549629f64a0b16971c7`. The tested local tree matches the deployed source. The live bank example was checked and saved; after clearing the composer, its summary could be filtered and reopened in Tamil. A post-release runtime error/fatal log query returned no matching entries.
+
 **Story:** A person checks a message, explicitly saves its summary on the device, then revisits the recorded reasons and guidance, filters the list, exports all summaries or deletes one check. This path uses browser storage and has no server or account dependency.
 
 | Boundary | Result | Evidence |

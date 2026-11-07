@@ -2,6 +2,8 @@
 
 ## Follow-up 1.2.0 — 7 November 2026
 
+- Production release: Vercel deployment `dpl_CfP1SV8tfry5jeTDpL4Yeey4rtXw` is READY at https://inx-shield.vercel.app/, using app source commit `32e397c0d0a91411a38ad549629f64a0b16971c7` (tree `d5d8938560825e6c5662e5a974b7dfaaa9bb4d5e`, identical to the locally tested source). The live bank sample was checked, saved, cleared from the composer, filtered and reopened in Tamil with its recorded reasons and guidance. No matching deployment error/fatal runtime logs were returned in the post-release scan.
+
 - Saved checks now reopen their recorded warning categories and next-step guidance in English or Tamil. They are clearly labelled as saved guidance, not a fresh analysis; original messages and link addresses remain unavailable.
 - Device history supports combined result/source filters, result counts, a clear no-match state, filter reset and individual deletion. Export all always includes every saved summary, regardless of filters. The newest 100 summaries are retained; changes in another tab refresh the list.
 - Read/write normalization rebuilds records from allowed summary fields, rejects corrupt rows and inherited object keys, removes duplicate IDs/categories and keeps legacy summaries. Unknown extra fields cannot enter JSON exports.
