@@ -2,6 +2,8 @@
 
 ## Detection fix 1.2.1 — 8 November 2026
 
+- Production deployment `dpl_FkGmrAUpkGz2srii3uiTqeiyFGfM` is READY at https://inx-shield.vercel.app/ from source commit `2f927b03e2e59814ec710336e3d0a8fc062b930c`. Its tree `a71c55cad9f58c4aeb79494296e5644cf19334e4` matches the locally tested source. Live checks confirmed a visible scam warning for `send OTP`, a low verdict for explicit safety advice, and caution with a hostname for the parcel-fee/domain-path example. The two original user messages remain unverified because their texts have not been supplied.
+
 - The user reported two unknown-sender messages were not detected or did not respond. Their original messages and exact visible behavior have not been supplied, so this release does not claim to resolve those specific examples or an established UI freeze.
 - Independently reproduced misses: short requests such as `send OTP` and `OTP anuppu` returned unclear before any rule ran; dotted OTP wording and an advice clause followed by a code request could return low.
 - Strong warning patterns now run before the minimum-context fallback. Common spaced/dotted/dashed OTP/PIN/CVV forms and verification-code wording are recognized. Advice exemptions are scoped to clauses/line breaks, with English, Tamil and Tanglish regression coverage.

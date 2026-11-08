@@ -2,6 +2,8 @@
 
 Verified 8 November 2026. The web app, detector and downloadable extension share the corrected engine.
 
+Production deployment `dpl_FkGmrAUpkGz2srii3uiTqeiyFGfM` is READY at https://inx-shield.vercel.app/ from source commit `2f927b03e2e59814ec710336e3d0a8fc062b930c`. Its tree `a71c55cad9f58c4aeb79494296e5644cf19334e4` matches the locally tested source. Live checks confirmed a visible scam warning for `send OTP`, a low verdict for explicit safety advice, and caution with a hostname for the parcel-fee/domain-path example. The two original user messages remain unverified because their texts have not been supplied.
+
 The reported issue was that two unknown-sender messages were not detected or did not respond. The original texts and exact UI behavior have not been supplied. The following are independently written regression examples, not copies of the user's messages.
 
 | Example | Previous engine | Corrected engine |
