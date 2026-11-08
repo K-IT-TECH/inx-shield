@@ -1,9 +1,9 @@
-export const ENGINE_VERSION = 'rules-1.1.0';
+export const ENGINE_VERSION = 'rules-1.2.1';
 export const MAX_LENGTH = 12000;
 
 // Explainable signals, not a trained classifier or a guarantee of safety.
 const rules = [
-  { id:'credentials', weight:4, pattern:/(?:\b(?:share|send|tell|give|reply|provide|enter|verify)\b.{0,45}\b(?:otp|pin|password|one.time password|cvv)\b)|(?:(?:otp|pin|password|கடவுச்சொல்|ரகசிய எண்).{0,35}(?:அனுப்பு|பகிர்|சொல்லு|கொடுக்|sollu|anuppu|share|send))/iu },
+  { id:'credentials', weight:4, pattern:/(?:\b(?:share|send|tell|give|reply|provide|enter|verify|forward)\b.{0,45}\b(?:otp|pin|password|one[ -]time (?:password|code)|verification code|cvv)\b)|(?:(?:\b(?:otp|pin|password|cvv|verification code)\b|கடவுச்சொல்|ரகசிய எண்).{0,35}(?:அனுப்பு|பகிர்|சொல்லு|கொடுக்|\b(?:sollu|anupp?(?:u|unga)|share|send)\b))/iu },
   { id:'urgency', weight:1, pattern:/\b(?:urgent|immediately|act now|within \d+ (?:minutes?|hours?)|last warning|final notice|expires? today)\b|உடனே|உடனடியாக|கடைசி எச்சரிக்கை|udan[ae]/iu },
   { id:'threat', weight:2, pattern:/\b(?:(?:account|card|bank|sim).{0,25}(?:blocked|suspended|deactivated|closed)|arrest|digital arrest|legal action)\b|கணக்கு.{0,20}(?:முடக்க|தடை)|கைது/iu },
   { id:'prize', weight:2, pattern:/\b(?:you(?:'ve| have)? won|lottery|claim your prize|free money|guaranteed (?:profit|return)|double your money)\b|பரிசு வென்|பரிசை பெற|லாட்டரி|பணம் இரட்டிப்பு/iu },
@@ -30,22 +30,34 @@ export const REASONS = {
 export function analyze(input, {links:capturedLinks=[]} = {}) {
   if (typeof input !== 'string') throw new TypeError('Message must be text');
   if (input.length > MAX_LENGTH) throw new RangeError('Message exceeds 12,000 characters');
-  const text = input.normalize('NFKC').replace(/[\u200B-\u200D\uFEFF]/g,'').trim();
+  const normalizedText = input.normalize('NFKC').replace(/[\u200B-\u200D\uFEFF]/g,'').replace(/’/g,"'")
+    // Common initialism disguises should not bypass a code-sharing warning.
+    .replace(/\b(?:o[.\s_-]+t[.\s_-]*p|ot[.\s_-]+p)\b\.?/giu,'OTP')
+    .replace(/\b(?:p[.\s_-]+i[.\s_-]*n|pi[.\s_-]+n)\b\.?/giu,'PIN')
+    .replace(/\b(?:c[.\s_-]+v[.\s_-]*v|cv[.\s_-]+v)\b\.?/giu,'CVV')
+    .trim();
+  const text = normalizedText.replace(/\s+/gu,' ');
   if (!Array.isArray(capturedLinks) || capturedLinks.length > 20 || capturedLinks.some(link => typeof link !== 'string' || link.length > 2048)) throw new TypeError('Invalid captured links');
-  if (text.length < 12 && !capturedLinks.length) return {verdict:'unclear', reasons:[], links:[], version:ENGINE_VERSION};
-  // Ignore explicit safety advice when evaluating secret-sharing requests.
-  const withoutAdvice = text.split(/[.!?\n]+/u).filter(s => !/(?:\b(?:never|do not|don't|dont)\b.{0,25}(?:share|send|give|tell)|பகிர வேண்டாம்|பகிராதீ|அனுப்பாதீ)/iu.test(s)).join('. ');
+  // Scope safety advice to its clause. A later request after 'but' must still
+  // be checked; do not discard the whole sentence just because it quotes advice.
+  const withoutAdvice = normalizedText.split(/[.!?;\n]+|\b(?:but|however|instead)\b|ஆனால்/iu).filter(s => !/(?:\b(?:never|do not|don't|dont)\b.{0,40}(?:share|send|give|tell|provide|enter|forward)|பகிர வேண்டாம்|பகிராதீ|அனுப்பாதீ)/iu.test(s)).join('. ');
   let score = 0; const reasons = [];
   for (const rule of rules) {
     if (rule.pattern.test(rule.id === 'credentials' ? withoutAdvice : text)) {
       reasons.push(rule.id); score += rule.weight;
     }
   }
-  const urls = [...capturedLinks, ...(text.match(/(?:https?:\/\/|www\.)[^\s<>"']+/giu) || [])];
+  // Also recognize a domain followed by a path, as often pasted from SMS.
+  // A bare filename or email address is not treated as a web link.
+  const pastedLinks = text.match(/(?:https?:\/\/|www\.)[^\s<>"']+|(?<![\p{L}\p{N}_@.\-])(?:[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?\.)+[a-z]{2,63}\/[^\s<>"']*/giu) || [];
+  const urls = [...capturedLinks, ...pastedLinks.map(raw => {
+    const cleaned = raw.replace(/[),.;!?]+$/u,'');
+    return /^https?:\/\//iu.test(cleaned) ? cleaned : `https://${cleaned}`;
+  })];
   const links = [];
   for (const raw of urls.slice(0,20)) {
     try {
-      const url = new URL(raw.startsWith('www.') ? `https://${raw}` : raw);
+      const url = new URL(raw);
       if (!['http:', 'https:'].includes(url.protocol)) continue;
       const host = url.hostname;
       links.push(host); // Never fetch, render as a link, or retain path/query.
@@ -55,7 +67,7 @@ export function analyze(input, {links:capturedLinks=[]} = {}) {
   }
   if (links.length) { reasons.push('link'); score += 1; }
   const dangerous = reasons.includes('credentials') || (reasons.includes('prize') && reasons.includes('payment')) || (reasons.includes('remote') && score >= 4) || score >= 6;
-  const verdict = dangerous ? 'scam' : score >= 3 ? 'caution' : text.length < 12 ? 'unclear' : reasons.includes('promotion') ? 'promotion' : 'low';
+  const verdict = dangerous ? 'scam' : score >= 2 ? 'caution' : text.length < 12 ? 'unclear' : reasons.includes('promotion') ? 'promotion' : 'low';
   return { verdict, reasons:[...new Set(reasons)], links:[...new Set(links)], version:ENGINE_VERSION };
 }
 

@@ -11,6 +11,7 @@ const errors={
   too_long:['This message is over 12,000 characters. Select a shorter section; no partial check was made.','இந்த message 12,000 எழுத்துகளுக்கு மேல் உள்ளது. சிறிய பகுதியைத் தேர்வு செய்யுங்கள். பாதி message சோதிக்கப்படவில்லை.'],
   too_many_links:['This selection has more than 20 web links. Select a smaller part of the email to check.','இந்தப் பகுதியில் 20-க்கும் மேற்பட்ட web links உள்ளன. Email-ன் சிறிய பகுதியைத் தேர்வு செய்யுங்கள்.'],
   restricted:['This page cannot be read. Copy and paste the message below.','இந்த page-ஐ படிக்க முடியவில்லை. Message-ஐ கீழே copy–paste செய்யுங்கள்.'],
+  failed:['This check could not finish. Close and reopen the extension, then try again.','இந்தச் சோதனையை முடிக்க முடியவில்லை. Extension-ஐ மூடித் திறந்து மீண்டும் முயற்சியுங்கள்.'],
   empty:['Add a message first.','முதலில் message சேருங்கள்.']
 };
 function renderStatus(){
@@ -67,5 +68,5 @@ $('#check').addEventListener('click',()=>{
   try{
     if(!$('#text').value.trim()){error='empty';return;}
     last=checkCapture($('#text').value,captured);error='';render();$('#result').focus();
-  }catch{error='too_long';}finally{renderStatus();}
+  }catch(cause){last=null;$('#result').hidden=true;error=cause instanceof RangeError?'too_long':'failed';}finally{renderStatus();}
 });

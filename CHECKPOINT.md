@@ -1,5 +1,15 @@
 # Delivery checkpoint
 
+## Detection fix 1.2.1 — 8 November 2026
+
+- The user reported two unknown-sender messages were not detected or did not respond. Their original messages and exact visible behavior have not been supplied, so this release does not claim to resolve those specific examples or an established UI freeze.
+- Independently reproduced misses: short requests such as `send OTP` and `OTP anuppu` returned unclear before any rule ran; dotted OTP wording and an advice clause followed by a code request could return low.
+- Strong warning patterns now run before the minimum-context fallback. Common spaced/dotted/dashed OTP/PIN/CVV forms and verification-code wording are recognized. Advice exemptions are scoped to clauses/line breaks, with English, Tamil and Tanglish regression coverage.
+- Fee requests and account threats receive caution without requiring another signal. Domain/path links pasted without a scheme and uppercase WWW links are inspected; filenames and email addresses are excluded. Link paths and queries are never retained or visited.
+- Web and extension failures now clear stale results and distinguish unexpected failures from input-length errors. The web app, extension and rule engine are 1.2.1. Existing extension users need the new ZIP and Reload; saved summaries keep their original verdicts.
+- Validation: 88 Node tests pass, including 33 added detection/UI regressions; production build and extension ZIP integrity pass with unchanged activeTab/scripting permissions. Desktop browser checks confirmed visible warnings for short English/Tanglish/Tamil requests, dotted OTP and advice-then-request text. Safety advice remained unflagged, and empty input showed a translated prompt without stale results. No app-origin browser errors were observed.
+- See docs/DETECTION_VERIFICATION.md for the before/after examples, verification scope and remaining need for the user's exact redacted messages. Test counts are not an accuracy measurement. No message upload, model service, authentication or database changes.
+
 ## Follow-up 1.2.0 — 7 November 2026
 
 - Production release: Vercel deployment `dpl_CfP1SV8tfry5jeTDpL4Yeey4rtXw` is READY at https://inx-shield.vercel.app/, using app source commit `32e397c0d0a91411a38ad549629f64a0b16971c7` (tree `d5d8938560825e6c5662e5a974b7dfaaa9bb4d5e`, identical to the locally tested source). The live bank sample was checked, saved, cleared from the composer, filtered and reopened in Tamil with its recorded reasons and guidance. No matching deployment error/fatal runtime logs were returned in the post-release scan.

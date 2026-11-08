@@ -34,3 +34,22 @@ test('A failed new capture clears previous result and local email text with a tr
   assert.equal(p.get('#text').value,'');assert.equal(p.get('#result').hidden,true);assert.equal(p.get('#links').hidden,true);assert.match(p.get('#error').textContent,/cannot be read/);
   p.get('#lang').value='ta';p.get('#lang').listeners.change();assert.match(p.get('#error').textContent,/படிக்க முடியவில்லை/);
 });
+test('Bundled extension gives a visible warning for short pasted requests in both languages',async()=>{
+  const p=popup();p.get('#text').value='send OTP';await p.click('#check');
+  assert.equal(p.get('#result').hidden,false);assert.match(p.get('#title').textContent,/Likely scam/);
+  assert.equal(p.get('#error').textContent,'');
+  p.get('#lang').value='ta';p.get('#lang').listeners.change();
+  assert.match(p.get('#title').textContent,/மோசடியாக/);
+});
+test('Unexpected extension rendering failures clear stale output and show a retry message',async()=>{
+  const p=popup();p.get('#text').value='send OTP';await p.click('#check');
+  p.get('#reasons').append=()=>{throw new Error('render failure');};
+  await p.click('#check');assert.equal(p.get('#result').hidden,true);
+  assert.match(p.get('#error').textContent,/could not finish/);
+  p.get('#lang').value='ta';assert.doesNotThrow(()=>p.get('#lang').listeners.change());
+  assert.match(p.get('#error').textContent,/முடிக்க முடியவில்லை/);
+});
+test('Oversized extension input keeps its specific length error',async()=>{
+  const p=popup();p.get('#text').value='a'.repeat(12001);await p.click('#check');
+  assert.equal(p.get('#result').hidden,true);assert.match(p.get('#error').textContent,/over 12,000/);
+});

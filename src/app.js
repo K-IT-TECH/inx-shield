@@ -128,7 +128,23 @@ function setLanguage(value){lang=value;$('#language').value=value;try{localStora
 $('#language').addEventListener('change',e=>setLanguage(e.target.value));
 $('#message').addEventListener('input',()=>{updateCount();resetResult();});$('#source').addEventListener('change',resetResult);
 $('#clear').addEventListener('click',()=>{$('#message').value='';resetResult();updateCount();$('#message').focus();});
-$('#analyze').addEventListener('click',()=>{if(!$('#message').value.trim()){$('#input-error').textContent=t('Paste a message first, or choose an example.','முதலில் message-ஐ paste செய்யுங்கள் அல்லது உதாரணத்தைத் தேர்வு செய்யுங்கள்.');$('#message').focus();return;}try{result=analyze($('#message').value);$('#input-error').textContent='';renderResult();$('#result-panel').focus({preventScroll:true});if(innerWidth<681)$('#result-panel').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});}catch{$('#input-error').textContent=t('Please keep the message under 12,000 characters.','Message 12,000 எழுத்துகளுக்குள் இருக்க வேண்டும்.');}});
+$('#analyze').addEventListener('click',()=>{
+  resetResult();
+  if(!$('#message').value.trim()){
+    $('#input-error').textContent=t('Paste a message first, or choose an example.','முதலில் message-ஐ paste செய்யுங்கள் அல்லது உதாரணத்தைத் தேர்வு செய்யுங்கள்.');
+    $('#message').focus();return;
+  }
+  try{
+    result=analyze($('#message').value);renderResult();
+    $('#result-panel').focus({preventScroll:true});
+    if(innerWidth<681)$('#result-panel').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});
+  }catch(error){
+    resetResult();
+    $('#input-error').textContent=error instanceof RangeError
+      ?t('Please keep the message within 12,000 characters.','Message 12,000 எழுத்துகளுக்குள் இருக்க வேண்டும்.')
+      :t('This check could not finish. Refresh the page and try again. No result was saved.','இந்தச் சோதனையை முடிக்க முடியவில்லை. பக்கத்தை refresh செய்து மீண்டும் முயற்சியுங்கள். முடிவு சேமிக்கப்படவில்லை.');
+  }
+});
 $$('[data-sample]').forEach(button=>button.addEventListener('click',()=>{$('#message').value=pick(samples[button.dataset.sample]);resetResult();updateCount();$('#message').focus();}));
 $('#save-local').addEventListener('click',()=>{if(!result)return;if(writeHistory([summary(),...readHistory()].slice(0,100))){resetHistoryFilters();toast(t('Result saved on this device. The message was not saved.','முடிவு இந்த சாதனத்தில் சேமிக்கப்பட்டது. Message சேமிக்கப்படவில்லை.'));}});
 $('#clear-history').addEventListener('click',()=>{if(confirm(t('Delete all result summaries saved on this device?','இந்த சாதனத்தில் சேமித்த அனைத்து முடிவுகளையும் நீக்கவா?'))&&writeHistory([])){resetHistoryFilters();toast(t('Device history deleted.','சாதன history நீக்கப்பட்டது.'));}});
