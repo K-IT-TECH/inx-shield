@@ -1,16 +1,21 @@
-export const ENGINE_VERSION = 'rules-1.2.1';
+import { normalizeMessage, messageClauses } from './message-text.js';
+
+export const ENGINE_VERSION = 'rules-1.3.0';
 export const MAX_LENGTH = 12000;
 
-// Explainable signals, not a trained classifier or a guarantee of safety.
+// Bounded, explainable patterns. This is not a trained language model.
+const secret = String.raw`(?:\b(?:otp|pin|cvv|pass?word|passcode|one[ -]time (?:password|code)|(?:verification|verfication|security|login|authentication) code|(?:six|6)[ -]digit (?:verification |security )?code|code (?:you (?:just )?(?:received|got)|sent to (?:your|the) (?:phone|mobile)))\b|கடவுச்சொல்|ரகசிய (?:எண்|குறியீ(?:டு|ட்டை))|சரிபார்ப்பு(?:க்)? குறியீ(?:டு|ட்டை)|ஒரு முறை குறியீ(?:டு|ட்டை))`;
+const request = String.raw`(?:\b(?:share|shre|send|snd|tell|give|reply|provide|enter|verify|forward|reveal|sollu(?:nga)?|solla|anupp?(?:u|unga|avum)|kodu(?:nga)?|kudu(?:nga)?)\b|அனுப்பு\p{L}*\p{M}*|பகிர்|பகிரு|சொல்லு|தெரிவி|கொடுக்|கொடு)`;
+const credentials = new RegExp(String.raw`${request}.{0,55}?${secret}|${secret}.{0,45}?${request}|\b(?:what(?:'s| is)|(?:can|could) (?:i|we) have|(?:i|we) need)\b.{0,30}?${secret}`, 'iu');
 const rules = [
-  { id:'credentials', weight:4, pattern:/(?:\b(?:share|send|tell|give|reply|provide|enter|verify|forward)\b.{0,45}\b(?:otp|pin|password|one[ -]time (?:password|code)|verification code|cvv)\b)|(?:(?:\b(?:otp|pin|password|cvv|verification code)\b|கடவுச்சொல்|ரகசிய எண்).{0,35}(?:அனுப்பு|பகிர்|சொல்லு|கொடுக்|\b(?:sollu|anupp?(?:u|unga)|share|send)\b))/iu },
-  { id:'urgency', weight:1, pattern:/\b(?:urgent|immediately|act now|within \d+ (?:minutes?|hours?)|last warning|final notice|expires? today)\b|உடனே|உடனடியாக|கடைசி எச்சரிக்கை|udan[ae]/iu },
-  { id:'threat', weight:2, pattern:/\b(?:(?:account|card|bank|sim).{0,25}(?:blocked|suspended|deactivated|closed)|arrest|digital arrest|legal action)\b|கணக்கு.{0,20}(?:முடக்க|தடை)|கைது/iu },
-  { id:'prize', weight:2, pattern:/\b(?:you(?:'ve| have)? won|lottery|claim your prize|free money|guaranteed (?:profit|return)|double your money)\b|பரிசு வென்|பரிசை பெற|லாட்டரி|பணம் இரட்டிப்பு/iu },
-  { id:'payment', weight:2, pattern:/\b(?:pay.{0,25}(?:fee|charge|deposit)|processing fee|release fee|advance payment|transfer.{0,20}(?:money|funds)|gift cards?|crypto wallet|upi pin)\b|கட்டணம் செலுத்த|முன்பணம்|பணம் அனுப்பு/iu },
-  { id:'remote', weight:3, pattern:/\b(?:install|download).{0,35}(?:anydesk|teamviewer|apk|remote|screen.?shar)|\bscreen.?shar.{0,25}(?:bank|payment)|திரையை பகிர்/iu },
-  { id:'impersonation', weight:1, pattern:/\b(?:bank|rbi|income tax|police|customs|courier|kyc|aadhaar)\b|வங்கி|காவல்துறை|ஆதார்/iu },
-  { id:'promotion', weight:0, pattern:/\b(?:sale|discount|\d+% off|unsubscribe|limited offer|buy one|get one|shop now)\b|தள்ளுபடி|சலுகை|விற்பனை/iu }
+  { id: 'credentials', weight: 4, pattern: credentials, request: true },
+  { id: 'urgency', weight: 1, pattern: /\b(?:urgent|immediately|act now|within \d+ (?:minutes?|hours?)|last warning|final notice|expires? today|udan[ae]|seekiram|seekkiram)\b|உடனே|உடனடியாக|கடைசி எச்சரிக்கை|சீக்கிரம்/iu },
+  { id: 'threat', weight: 2, pattern: /\b(?:(?:account|card|sim).{0,25}?(?:block(?:ed|edhu)?|suspend(?:ed)?|deactivat(?:ed|e)|clos(?:ed|e))|arrest|digital arrest|legal action)\b|(?:கணக்கு|கார்டு|சிம்).{0,20}?(?:முடக்க|தடை|செயலிழ)|கைது/iu },
+  { id: 'prize', weight: 2, pattern: /\b(?:you(?:'ve| have)? won|lottery|claim your prize|free money|guaranteed (?:profit|returns?)|double your money|panam (?:double|rettippu)|parisu (?:vizhunth|venr|win))\b|பரிசு வென்|பரிசை(?:ப்)? பெற|லாட்டரி|பணம் இரட்டிப்பு/iu },
+  { id: 'payment', weight: 2, request: true, pattern: /\b(?:pay.{0,25}?(?:fee|charge|deposit)|processing fee|release fee|advance payment|transfer.{0,20}?(?:money|funds)|gift cards?|crypto wallet|upi pin|(?:fee|deposit|panam|kaasu).{0,25}?(?:kattu(?:nga)?|seluthu(?:nga)?|anupp?(?:u|unga)|pay|transfer))\b|கட்டண.{0,20}?(?:செலுத்த|கட்டு)|முன்பணம்|பணம்.{0,15}?அனுப்பு/iu },
+  { id: 'remote', weight: 3, request: true, pattern: /\b(?:install|download).{0,35}?(?:anydesk|teamviewer|apk|remote|screen.?shar)|\b(?:share|enable).{0,20}?(?:screen|screen.?shar)|\bscreen.?shar.{0,25}?(?:bank|payment)|\b(?:anydesk|teamviewer|apk).{0,25}?(?:install|download)\b|திரையை(?:ப்)? பகிர்|திரையை(?:ப்)? பகிரு/iu },
+  { id: 'impersonation', weight: 1, pattern: /\b(?:bank|rbi|income tax|police|customs|courier|kyc|aadhaar)\b|வங்கி|காவல்துறை|ஆதார்/iu },
+  { id: 'promotion', weight: 0, pattern: /\b(?:sale|discount|\d+% off|unsubscribe|limited offer|buy one|get one|shop now)\b|தள்ளுபடி|சலுகை|விற்பனை/iu }
 ];
 
 export const REASONS = {
@@ -27,47 +32,76 @@ export const REASONS = {
   promotion: ['Looks like an advertisement or offer','விளம்பரம் அல்லது சலுகை போலத் தெரிகிறது']
 };
 
-export function analyze(input, {links:capturedLinks=[]} = {}) {
+// Check negation near each request, rather than exempting a whole message.
+function isAdvice(clause, match, previousEnd, id) {
+  const before = clause.slice(Math.max(previousEnd, match.index - 75), match.index);
+  const phrase = match[0];
+  const after = clause.slice(match.index + phrase.length, match.index + phrase.length + 35);
+  if (/\b(?:never|do not|don't|dont|must not|should not|shouldn't|avoid)(?:[\s,]+(?:ever|please|under any circumstances|on any account|ask (?:you )?to|tell (?:you )?to|need to))*[\s,]*$/iu.test(before)) return true;
+  if (/(?:வேண்டாம்|வேண்டியதில்லை|கூடாது|மாட்டோம்|மாட்டேன்|அனுப்பாத|பகிராத|சொல்லாத|கொடுக்காத)/u.test(phrase + after.slice(0, 24))) return true;
+  if (/\b(?:vendam|vendaam|koodathu|koodadhu|anupp?(?:atheenga|aathinga|aath[eai]|adhe)|soll(?:atheenga|aathinga)|pann(?:atheenga|aathinga))\b/iu.test(phrase + after)) return true;
+  if (id === 'credentials' && /\b(?:we|i|app|system|bank)\s+(?:will|can)\s+(?:automatically\s+)?$/iu.test(before) && /^(?:send|give)\b/iu.test(phrase)) return true;
+  return false;
+}
+function negatedThreat(text) {
+  return /\b(?:not|never|no longer|isn't|isnt|won't|wont)(?:\s+be)?\s+(?:blocked|block|suspended|suspend|deactivated|closed|arrested)\b|முடக்கப்படாது|செயலிழக்காது|கைது இல்லை|block aagathu|block aagadhu/iu.test(text);
+}
+
+export function analyze(input, { links: capturedLinks = [], includeEvidence = false } = {}) {
   if (typeof input !== 'string') throw new TypeError('Message must be text');
   if (input.length > MAX_LENGTH) throw new RangeError('Message exceeds 12,000 characters');
-  const normalizedText = input.normalize('NFKC').replace(/[\u200B-\u200D\uFEFF]/g,'').replace(/’/g,"'")
-    // Common initialism disguises should not bypass a code-sharing warning.
-    .replace(/\b(?:o[.\s_-]+t[.\s_-]*p|ot[.\s_-]+p)\b\.?/giu,'OTP')
-    .replace(/\b(?:p[.\s_-]+i[.\s_-]*n|pi[.\s_-]+n)\b\.?/giu,'PIN')
-    .replace(/\b(?:c[.\s_-]+v[.\s_-]*v|cv[.\s_-]+v)\b\.?/giu,'CVV')
-    .trim();
-  const text = normalizedText.replace(/\s+/gu,' ');
   if (!Array.isArray(capturedLinks) || capturedLinks.length > 20 || capturedLinks.some(link => typeof link !== 'string' || link.length > 2048)) throw new TypeError('Invalid captured links');
-  // Scope safety advice to its clause. A later request after 'but' must still
-  // be checked; do not discard the whole sentence just because it quotes advice.
-  const withoutAdvice = normalizedText.split(/[.!?;\n]+|\b(?:but|however|instead)\b|ஆனால்/iu).filter(s => !/(?:\b(?:never|do not|don't|dont)\b.{0,40}(?:share|send|give|tell|provide|enter|forward)|பகிர வேண்டாம்|பகிராதீ|அனுப்பாதீ)/iu.test(s)).join('. ');
-  let score = 0; const reasons = [];
-  for (const rule of rules) {
-    if (rule.pattern.test(rule.id === 'credentials' ? withoutAdvice : text)) {
-      reasons.push(rule.id); score += rule.weight;
+  const { text, offsets } = normalizeMessage(input);
+  const clauses = messageClauses(text);
+  const reasons = [], evidence = [];
+  let score = 0;
+  function add(id, weight, start, end) {
+    if (!reasons.includes(id)) { reasons.push(id); score += weight; }
+    if (includeEvidence && evidence.length < 60 && Number.isInteger(start) && offsets[start] && offsets[end - 1]) {
+      evidence.push({ id, start: offsets[start][0], end: offsets[end - 1][1] });
     }
   }
-  // Also recognize a domain followed by a path, as often pasted from SMS.
-  // A bare filename or email address is not treated as a web link.
-  const pastedLinks = text.match(/(?:https?:\/\/|www\.)[^\s<>"']+|(?<![\p{L}\p{N}_@.\-])(?:[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?\.)+[a-z]{2,63}\/[^\s<>"']*/giu) || [];
-  const urls = [...capturedLinks, ...pastedLinks.map(raw => {
-    const cleaned = raw.replace(/[),.;!?]+$/u,'');
-    return /^https?:\/\//iu.test(cleaned) ? cleaned : `https://${cleaned}`;
+  for (const rule of rules) {
+    const sections = rule.request || rule.id === 'threat' ? clauses : [{ text, start: 0 }];
+    let count = 0;
+    for (const section of sections) {
+      let previousEnd = 0, previousAdvice = false;
+      for (const match of section.text.matchAll(new RegExp(rule.pattern.source, 'gisu'))) {
+        const ignored = (rule.request && isAdvice(section.text, match, previousEnd, rule.id))
+          || (rule.request && previousAdvice && /^\s*(?:or|and)\s*$/iu.test(section.text.slice(previousEnd, match.index)))
+          || (rule.id === 'threat' && negatedThreat(section.text.slice(match.index, match.index + match[0].length + 20)));
+        previousEnd = match.index + match[0].length;
+        previousAdvice = ignored;
+        if (ignored) continue;
+        add(rule.id, rule.weight, section.start + match.index, section.start + match.index + match[0].length);
+        if (++count >= 5) break;
+      }
+      if (count >= 5) break;
+    }
+  }
+  // Only hostname summaries leave the detector. No URL is ever fetched.
+  const pasted = [...text.matchAll(/(?:https?:\/\/|www\.)[^\s<>"']+|(?<![\p{L}\p{N}_@.\-])(?:[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?\.)+[a-z]{2,63}\/[^\s<>"']*/giu)];
+  const urls = [...capturedLinks.map(raw => ({ raw })), ...pasted.map(match => {
+    const clean = match[0].replace(/[),.;!?]+$/u, '');
+    return { raw: /^https?:\/\//iu.test(clean) ? clean : `https://${clean}`, start: match.index, end: match.index + clean.length };
   })];
   const links = [];
-  for (const raw of urls.slice(0,20)) {
+  for (const { raw, start, end } of urls.slice(0, 20)) {
     try {
       const url = new URL(raw);
       if (!['http:', 'https:'].includes(url.protocol)) continue;
       const host = url.hostname;
-      links.push(host); // Never fetch, render as a link, or retain path/query.
-      if (/^(?:bit\.ly|tinyurl\.com|t\.co|cutt\.ly|rb\.gy|shorturl\.at)$/i.test(host) && !reasons.includes('short_link')) { reasons.push('short_link'); score += 1; }
-      if ((url.username || /(?:^|\.)xn--|^\d+\.\d+\.\d+\.\d+$/.test(host)) && !reasons.includes('unusual_link')) { reasons.push('unusual_link'); score += 2; }
-    } catch { /* Invalid URL provides no reliable signal. */ }
+      links.push(host);
+      if (/^(?:bit\.ly|tinyurl\.com|t\.co|cutt\.ly|rb\.gy|shorturl\.at)$/i.test(host)) add('short_link', 1, start, end);
+      if (url.username || /(?:^|\.)xn--|^\d+\.\d+\.\d+\.\d+$/.test(host)) add('unusual_link', 2, start, end);
+      add('link', 1, start, end);
+    } catch { /* Invalid URLs provide no reliable signal. */ }
   }
-  if (links.length) { reasons.push('link'); score += 1; }
-  const dangerous = reasons.includes('credentials') || (reasons.includes('prize') && reasons.includes('payment')) || (reasons.includes('remote') && score >= 4) || score >= 6;
-  const verdict = dangerous ? 'scam' : score >= 2 ? 'caution' : text.length < 12 ? 'unclear' : reasons.includes('promotion') ? 'promotion' : 'low';
-  return { verdict, reasons:[...new Set(reasons)], links:[...new Set(links)], version:ENGINE_VERSION };
+  const dangerous = reasons.includes('credentials') || (reasons.includes('prize') && reasons.includes('payment'))
+    || (reasons.includes('remote') && score >= 4) || score >= 6;
+  const verdict = dangerous ? 'scam' : score >= 2 ? 'caution' : text.trim().length < 12 ? 'unclear' : reasons.includes('promotion') ? 'promotion' : 'low';
+  const result = { verdict, reasons, links: [...new Set(links)], version: ENGINE_VERSION };
+  // Evidence is opt-in, uses original UTF-16 offsets, and is never persisted.
+  if (includeEvidence) result.evidence = evidence;
+  return result;
 }
-

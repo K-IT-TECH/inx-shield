@@ -2,12 +2,15 @@ import { createClient } from '@supabase/supabase-js';
 import { analyze, REASONS, ENGINE_VERSION } from './detector.js';
 import { ta, labels, descriptions, actions, samples } from './i18n.js';
 import { SUPABASE_URL, SUPABASE_KEY } from './config.js';
+import { renderEvidence } from './evidence.js';
+import { connectFeedback } from './feedback.js';
 import { connectSharing } from './share.js';
 import { createHistoryStore, filterHistory, normalizeHistory, HISTORY_KEY } from './history.js';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 let lang='en', result=null, toastTimer, installPrompt, account=null, cloudRows=[];
 try { if(localStorage.getItem('inx-shield-language')==='ta')lang='ta'; } catch { /* Language still works without storage. */ }
 const t=(en,ta)=>lang==='ta'?ta:en, pick=a=>a[lang==='ta'?1:0];
+const feedback=connectFeedback({getContext:()=>result?{result,text:$('#message').value,source:$('#source').value}:null,language:()=>lang});
 const original=new Map($$('[data-i18n]').map(el=>[el,el.innerHTML]));
 const toast=text=>{ $('#toast').textContent=text; clearTimeout(toastTimer); toastTimer=setTimeout(()=>$('#toast').textContent='',6500); };
 let supabase;
@@ -121,10 +124,17 @@ $('#history-verdict').addEventListener('change',renderHistory);
 $('#history-source').addEventListener('change',renderHistory);
 $('#reset-history-filters').addEventListener('click',resetHistoryFilters);
 window.addEventListener('storage',event=>{if(event.key===HISTORY_KEY||event.key===null)renderHistory();});
-function renderResult(){if(!result)return;$('#result-empty').hidden=true;$('#result-content').hidden=false;$('#verdict-box').className='verdict '+result.verdict;$('#verdict-kicker').textContent=t('Your message check','உங்கள் message சோதனை');$('#verdict-title').textContent=pick(labels[result.verdict]);$('#verdict-copy').textContent=pick(descriptions[result.verdict]);$('#next-copy').textContent=pick(actions[result.verdict]);$('#reasons').replaceChildren();const reasons=result.reasons.length?result.reasons.map(k=>pick(REASONS[k])):[t('No supported warning patterns found in this text.','இந்த text-ல் ஆதரிக்கப்படும் எச்சரிக்கை அறிகுறிகள் தெரியவில்லை.')];if(result.verdict==='unclear')reasons.splice(0,reasons.length,t('The message is too short to give useful context.','போதுமான தகவல் பெற message மிகவும் குறுகியதாக உள்ளது.'));for(const reason of reasons){const li=document.createElement('li');li.textContent=reason;$('#reasons').append(li);}$('#link-details').hidden=!result.links.length;$('#link-list').replaceChildren();for(const host of result.links){const li=document.createElement('li');li.textContent=host;$('#link-list').append(li);}$('#save-cloud').disabled=false;}
-function resetResult(){result=null;$('#result-empty').hidden=false;$('#result-content').hidden=true;$('#input-error').textContent='';$('#save-cloud').disabled=true;if('speechSynthesis'in window)speechSynthesis.cancel();}
+function renderHighlights(){
+  const evidence=result.evidence||[];
+  $('#evidence-details').hidden=!evidence.length;
+  $('#evidence-title').textContent=t('See highlighted phrases','குறிப்பிட்ட சொற்களைப் பாருங்கள்');
+  $('#evidence-note').textContent=t('Tap a highlight to see why it was noticed. These are clues, not proof. This text is not saved.','குறிப்பிட்ட சொற்களைத் தொட்டு காரணத்தைப் பாருங்கள். இவை அறிகுறிகள் மட்டுமே; ஆதாரம் அல்ல. இந்த text சேமிக்கப்படாது.');
+  renderEvidence($('#evidence-text'),$('#evidence-explanation'),$('#message').value,evidence,lang);
+}
+function renderResult(){if(!result)return;renderHighlights();$('#result-empty').hidden=true;$('#result-content').hidden=false;$('#verdict-box').className='verdict '+result.verdict;$('#verdict-kicker').textContent=t('Your message check','உங்கள் message சோதனை');$('#verdict-title').textContent=pick(labels[result.verdict]);$('#verdict-copy').textContent=pick(descriptions[result.verdict]);$('#next-copy').textContent=pick(actions[result.verdict]);$('#reasons').replaceChildren();const reasons=result.reasons.length?result.reasons.map(k=>pick(REASONS[k])):[t('No supported warning patterns found in this text.','இந்த text-ல் ஆதரிக்கப்படும் எச்சரிக்கை அறிகுறிகள் தெரியவில்லை.')];if(result.verdict==='unclear')reasons.splice(0,reasons.length,t('The message is too short to give useful context.','போதுமான தகவல் பெற message மிகவும் குறுகியதாக உள்ளது.'));for(const reason of reasons){const li=document.createElement('li');li.textContent=reason;$('#reasons').append(li);}$('#link-details').hidden=!result.links.length;$('#link-list').replaceChildren();for(const host of result.links){const li=document.createElement('li');li.textContent=host;$('#link-list').append(li);}$('#save-cloud').disabled=false;}
+function resetResult(){feedback.reset();$('#evidence-text').replaceChildren();$('#evidence-explanation').textContent='';$('#evidence-details').hidden=true;$('#evidence-details').open=false;result=null;$('#result-empty').hidden=false;$('#result-content').hidden=true;$('#input-error').textContent='';$('#save-cloud').disabled=true;if('speechSynthesis'in window)speechSynthesis.cancel();}
 function updateCount(){$('#char-count').textContent=`${$('#message').value.length.toLocaleString()} / 12,000`;}
-function setLanguage(value){lang=value;$('#language').value=value;try{localStorage.setItem('inx-shield-language',value);}catch{}document.documentElement.lang=value;$('.history-filters').setAttribute('aria-label',t('Filter device history','சாதன history-ஐ filter செய்'));for(const [el,en] of original){if(lang==='ta')el.textContent=ta[el.dataset.i18n]||el.textContent;else el.innerHTML=en;}$('#message').placeholder=t('Paste a message you’re unsure about…','சந்தேகமான message-ஐ இங்கே paste செய்யுங்கள்…');renderResult();renderHistory();renderCloud();if('speechSynthesis'in window)speechSynthesis.cancel();}
+function setLanguage(value){lang=value;$('#language').value=value;try{localStorage.setItem('inx-shield-language',value);}catch{}document.documentElement.lang=value;$('.history-filters').setAttribute('aria-label',t('Filter device history','சாதன history-ஐ filter செய்'));for(const [el,en] of original){if(lang==='ta')el.textContent=ta[el.dataset.i18n]||el.textContent;else el.innerHTML=en;}$('#message').placeholder=t('Paste a message you’re unsure about…','சந்தேகமான message-ஐ இங்கே paste செய்யுங்கள்…');feedback.translate();renderResult();renderHistory();renderCloud();if('speechSynthesis'in window)speechSynthesis.cancel();}
 $('#language').addEventListener('change',e=>setLanguage(e.target.value));
 $('#message').addEventListener('input',()=>{updateCount();resetResult();});$('#source').addEventListener('change',resetResult);
 $('#clear').addEventListener('click',()=>{$('#message').value='';resetResult();updateCount();$('#message').focus();});
@@ -135,7 +145,7 @@ $('#analyze').addEventListener('click',()=>{
     $('#message').focus();return;
   }
   try{
-    result=analyze($('#message').value);renderResult();
+    result=analyze($('#message').value,{includeEvidence:true});renderResult();
     $('#result-panel').focus({preventScroll:true});
     if(innerWidth<681)$('#result-panel').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});
   }catch(error){

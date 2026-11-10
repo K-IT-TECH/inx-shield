@@ -6,15 +6,15 @@ const {outputFiles}=await build({entryPoints:['extension/popup-source.js'],bundl
 const bundle=outputFiles[0].text;
 function popup(){
   const elements=new Map();
-  const element=()=>({value:'',textContent:'',hidden:true,children:[],listeners:{},addEventListener(type,fn){this.listeners[type]=fn;},replaceChildren(){this.children=[];},append(child){this.children.push(child);},focus(){}});
+  const element=()=>({value:'',textContent:'',hidden:true,open:false,checked:false,children:[],listeners:{},setAttribute(key,value){this[key]=value;},showModal(){this.open=true;},close(){this.open=false;this.listeners.close?.();},addEventListener(type,fn){this.listeners[type]=fn;},replaceChildren(){this.children=[];},append(child){this.children.push(child);},focus(){}});
   const get=id=>{if(!elements.has(id))elements.set(id,element());return elements.get(id);};
   let calls=0, restricted=false;
   const link={href:'https://attacker.example/private?token=secret',innerText:'https://bank.example',getBoundingClientRect:()=>({height:20})};
   const body={innerText:'Please review the school newsletter.',querySelectorAll:()=>[link],getBoundingClientRect:()=>({height:60})};
   const captureContext={URL,location:{hostname:'mail.google.com'},window:{getSelection:()=>({toString:()=>''})},document:{querySelectorAll:()=>[body]},getComputedStyle:()=>({display:'block',visibility:'visible'})};
-  const context={URL,document:{documentElement:{lang:'en'},querySelector:get,createElement:element},chrome:{tabs:{query:async()=>[{id:5}]},scripting:{executeScript:async({target,func})=>{calls++;assert.equal(target.tabId,5);if(restricted)throw Error('restricted page');return [{result:vm.runInNewContext('('+func.toString()+')()',captureContext)}];}}}};
+  const copied=[];const context={URL,navigator:{clipboard:{writeText:async text=>{copied.push(text);}}},document:{documentElement:{lang:'en'},querySelector:get,getElementById:id=>get('#'+id),createElement:element},chrome:{tabs:{query:async()=>[{id:5}]},scripting:{executeScript:async({target,func})=>{calls++;assert.equal(target.tabId,5);if(restricted)throw Error('restricted page');return [{result:vm.runInNewContext('('+func.toString()+')()',captureContext)}];}}}};
   vm.runInNewContext(bundle,context);
-  return {get,click:async id=>get(id).listeners.click(),calls:()=>calls,restrict:()=>{restricted=true;}};
+  return {get,copied,click:async id=>get(id).listeners.click(),calls:()=>calls,restrict:()=>{restricted=true;}};
 }
 test('Bundled popup captures only after click, evaluates copied function and shows destination mismatch',async()=>{
   const p=popup();assert.equal(p.calls(),0);await p.click('#capture');assert.equal(p.calls(),1);
@@ -52,4 +52,34 @@ test('Unexpected extension rendering failures clear stale output and show a retr
 test('Oversized extension input keeps its specific length error',async()=>{
   const p=popup();p.get('#text').value='a'.repeat(12001);await p.click('#check');
   assert.equal(p.get('#result').hidden,true);assert.match(p.get('#error').textContent,/over 12,000/);
+});
+
+test('Bundled feedback defaults to metadata, requires review, exports edits and clears on new input', async () => {
+  const p=popup();p.get('#text').value='Unga OTP 123456 sollunga. Contact person@example.test';await p.click('#check');
+  assert.ok(p.get('#evidence-text').children.some(child=>child.className==='evidence-mark'));
+  await p.click('#feedback-open');assert.equal(p.get('#feedback-dialog').open,true);
+  assert.equal(p.get('#feedback-include').checked,false);assert.equal(p.get('#feedback-copy').disabled,true);
+  p.get('#feedback-type').value='false_alarm';p.get('#feedback-type').listeners.change();
+  assert.doesNotMatch(p.get('#feedback-preview').value,/123456|person@example|reviewed_example/);
+  await p.click('#feedback-copy');assert.equal(p.copied.length,1);
+  p.get('#feedback-include').checked=true;p.get('#feedback-include').listeners.change();
+  assert.doesNotMatch(p.get('#feedback-example').value,/123456|person@example/);
+  assert.equal(p.get('#feedback-copy').disabled,true);
+  p.get('#feedback-reviewed').checked=true;p.get('#feedback-reviewed').listeners.change();
+  assert.equal(p.get('#feedback-copy').disabled,false);
+  p.get('#feedback-example').value='Send OTP [NUMBER]';p.get('#feedback-example').listeners.input();
+  assert.equal(p.get('#feedback-reviewed').checked,false);assert.equal(p.get('#feedback-copy').disabled,true);
+  p.get('#feedback-reviewed').checked=true;p.get('#feedback-reviewed').listeners.change();
+  await p.click('#feedback-copy');assert.match(p.copied.at(-1),/Send OTP \[NUMBER\]/);assert.doesNotMatch(p.copied.at(-1),/person@example|123456/);
+  p.get('#text').value='A new message';p.get('#text').listeners.input();
+  assert.equal(p.get('#feedback-dialog').open,false);assert.equal(p.get('#feedback-example').value,'');assert.equal(p.get('#feedback-preview').value,'');
+  assert.equal(p.get('#evidence-text').children.length,0);
+});
+test('Highlight explanations and feedback controls switch to Tamil', async () => {
+  const p=popup();p.get('#text').value='OTP kudunga';await p.click('#check');
+  p.get('#lang').value='ta';p.get('#lang').listeners.change();
+  const mark=p.get('#evidence-text').children.find(child=>child.className==='evidence-mark');
+  mark.listeners.click();assert.match(p.get('#evidence-explanation').textContent,/ரகசிய/);
+  await p.click('#feedback-open');assert.match(p.get('#feedback-title').textContent,/மேம்படுத்த/);
+  await p.click('#feedback-close');assert.equal(p.get('#feedback-dialog').open,false);
 });

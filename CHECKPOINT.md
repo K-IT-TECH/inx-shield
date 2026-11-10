@@ -1,5 +1,15 @@
 # Delivery checkpoint
 
+## Detection, highlights and feedback 1.3.0 — 10 November 2026
+
+- Implements the agreed first three priorities: expanded English/Tamil/Tanglish patterns, exact matched-phrase explanations, and reviewed wrong-result feedback. Screenshot OCR, context questions, QR scanning and practice mode remain future suggestions, not implemented features.
+- Detector remains local and rule-based. Added indirect secret-code requests, explicit spelling variants, Tamil inflections and Tanglish payment/remote-access requests. Negation now applies near each request; negative advice does not hide a later request. No accuracy percentage or sender verification claim.
+- Website and extension share original-text highlight rendering using offset-only evidence and text-safe DOM nodes. Click/keyboard explanations translate with the interface. Existing history stores only allowlisted summaries, without evidence or message text.
+- Feedback defaults to metadata only. Optional examples are masked for common identifiers, editable and review-gated. Editing invalidates review; closing or changing the message clears the draft. Copy/download works locally. The GitHub link opens a blank public issue form, with manual paste/submission and no message text in URLs. No feedback collection API, automatic learning, database or account changes.
+- Verification: 144 Node tests pass; production build and extension ZIP integrity pass. Browser QA confirmed English/Tamil results, correct highlight scope, review gating, redaction, edited report copy and download, stale-state cleanup, and responsive web/extension dialogs. A 390px web frame (375px content) and 375px extension frame (360px content) had no horizontal overflow. The extension was also exercised as a bundled local popup, not installed into a real Gmail session.
+- App/extension version: 1.3.0; detector version: rules-1.3.0. Existing extension users need the new ZIP and Reload. The two original user messages remain unprovided and unverified. Physical Android/Gmail tests and public account onboarding remain separate rollout work.
+- Publication of v1.3.0 to the public K-IT-TECH/inx-shield repository and https://inx-shield.vercel.app/ was explicitly approved on 10 November 2026. Implementation and checks are complete; release identifiers and live verification will be recorded after deployment. See docs/FEATURES_1_3_VERIFICATION.md.
+
 ## Detection fix 1.2.1 — 8 November 2026
 
 - Production deployment `dpl_FkGmrAUpkGz2srii3uiTqeiyFGfM` is READY at https://inx-shield.vercel.app/ from source commit `2f927b03e2e59814ec710336e3d0a8fc062b930c`. Its tree `a71c55cad9f58c4aeb79494296e5644cf19334e4` matches the locally tested source. Live checks confirmed a visible scam warning for `send OTP`, a low verdict for explicit safety advice, and caution with a hostname for the parcel-fee/domain-path example. The two original user messages remain unverified because their texts have not been supplied.

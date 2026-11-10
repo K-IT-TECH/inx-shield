@@ -23,3 +23,21 @@
 .history-detail .history-delete{margin-top:10px;padding-left:0}
 #history-count{padding-block:3px 9px}
 @media(max-width:680px){.history-filters{gap:12px}.history-filters label{min-width:0;max-width:none;flex-basis:100%}.history-filters button{padding-left:0}.history-heading{max-width:100%;padding-right:0}.history-badge{float:none;margin-top:8px}.history-detail{padding-left:17px;padding-right:0}}
+
+/* The original message is rendered as text nodes with accessible explanation buttons. */
+.evidence-details{margin:0 0 20px;border:1px solid #d9e1d4;border-radius:10px;padding:12px 14px;background:#fff}
+.evidence-text{font-size:.84rem;white-space:pre-wrap;overflow-wrap:anywhere;margin-top:14px;max-height:280px;overflow-y:auto;line-height:1.9}
+.evidence-mark{display:inline;font:inherit;line-height:inherit;white-space:pre-wrap;overflow-wrap:anywhere;color:#633b0d;background:#fff0c2;border:0;border-bottom:2px solid #b98232;border-radius:3px;padding:1px 2px;margin:0;cursor:pointer}
+.evidence-mark:hover{background:#ffe4a0}.evidence-mark:focus-visible{outline-offset:2px}
+#evidence-explanation:not(:empty){padding:10px;border-left:3px solid #b98232;background:#fff8e6;color:#633b0d}
+.checker>*{min-width:0}
+#feedback-dialog{width:min(640px,calc(100vw - 24px));max-width:640px;max-height:90dvh;padding:26px;overflow-y:auto;overscroll-behavior:contain}
+.feedback-heading{display:flex;justify-content:space-between;align-items:baseline;gap:14px}.feedback-heading h2{margin:0;font-size:1.3rem}.feedback-heading button{flex-shrink:0}
+#feedback-intro{font-size:.82rem;margin:12px 0 20px}
+#feedback-dialog label:not(.feedback-check){display:block;font-size:.8rem;font-weight:600;margin:16px 0 7px}
+#feedback-type{width:100%;max-width:none;border:1px solid #ccd7c8;border-radius:8px;padding:10px;background:#fafbf8;color:var(--ink)}
+.feedback-check{display:flex;align-items:flex-start;gap:10px;font-size:.79rem;margin:16px 0;cursor:pointer}.feedback-check input{flex-shrink:0;width:17px;height:17px;margin:4px 0 0;accent-color:var(--green)}
+#feedback-dialog textarea{min-height:100px;font-size:.79rem}#feedback-preview{min-height:130px;max-height:210px;font: .73rem/1.6 ui-monospace,monospace;white-space:pre-wrap}
+#feedback-redact-note{margin:0 0 10px}.feedback-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}#feedback-github{display:inline-block;margin-top:12px;font-size:.8rem}
+#feedback-dialog button:disabled{cursor:not-allowed}
+@media(max-width:680px){#feedback-dialog{padding:20px}.feedback-heading h2{font-size:1.1rem}.feedback-actions>*{flex:1}.evidence-mark{max-width:100%}}

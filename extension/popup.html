@@ -7,6 +7,25 @@
 <label for="text" id="label">Review the message or paste one below</label><textarea id="text" rows="7" maxlength="12000" aria-describedby="note"></textarea>
 <details id="links" hidden><summary id="links-title">Link destinations (not opened)</summary><ul id="link-list"></ul><p id="links-note">Names only. Redirects, attachments and sender identity are not verified.</p></details>
 <button id="check" class="primary">Check message</button><p id="error" role="alert"></p>
-<section id="result" hidden aria-live="polite" tabindex="-1" aria-labelledby="title"><h2 id="title"></h2><p id="description"></p><ul id="reasons"></ul><h3 id="next-title">Next step</h3><p id="next"></p></section>
+<section id="result" hidden aria-live="polite" tabindex="-1" aria-labelledby="title"><h2 id="title"></h2><p id="description"></p><details id="evidence-details" class="evidence-details" hidden><summary id="evidence-title">See highlighted phrases</summary><p id="evidence-note" class="fine">Tap a highlight to see why it was noticed. These are clues, not proof. This text is not saved.</p><div id="evidence-text" class="evidence-text"></div><p id="evidence-explanation" class="fine" role="status"></p></details><ul id="reasons"></ul><h3 id="next-title">Next step</h3><p id="next"></p><button id="feedback-open" type="button">Wrong result?</button></section>
 <p class="note" id="note">Rule-based guidance, not a guarantee. No automatic inbox scanning or message uploads. Pasted text cannot reveal hidden links.</p>
+
+<dialog id="feedback-dialog" aria-labelledby="feedback-title" aria-describedby="feedback-intro">
+  <div class="feedback-heading"><h2 id="feedback-title">Help improve this check</h2><button type="button" id="feedback-close" class="text-button">Close</button></div>
+  <p id="feedback-intro">Prepare a report you can review and share. Nothing is sent or saved automatically.</p>
+  <label for="feedback-type" id="feedback-type-label">What seems wrong?</label>
+  <select id="feedback-type"><option value="" id="feedback-type-empty">Choose one</option><option value="missed_scam" id="feedback-type-missed">A scam may have been missed</option><option value="false_alarm" id="feedback-type-false">A legitimate message was flagged</option><option value="wrong_category" id="feedback-type-category">The message category seems wrong</option></select>
+  <label class="feedback-check"><input id="feedback-include" type="checkbox"><span id="feedback-include-label">Include an edited example (optional)</span></label>
+  <div id="feedback-example-fields" hidden>
+    <label for="feedback-example" id="feedback-example-label">Review and edit the example</label>
+    <p id="feedback-redact-note" class="fine">Common codes, numbers, email addresses and links are masked to help you. Masking can miss details: remove names, addresses and any remaining secrets yourself.</p>
+    <textarea id="feedback-example" rows="4" maxlength="12000" aria-describedby="feedback-redact-note" autocomplete="off" spellcheck="false"></textarea>
+    <label class="feedback-check"><input id="feedback-reviewed" type="checkbox"><span id="feedback-reviewed-label">I reviewed this example and removed private details.</span></label>
+  </div>
+  <label for="feedback-preview" id="feedback-preview-label">Report preview</label><textarea id="feedback-preview" rows="5" readonly spellcheck="false"></textarea>
+  <p id="feedback-status" role="status" class="fine"></p>
+  <div class="feedback-actions"><button type="button" id="feedback-download" class="primary" disabled>Download report</button><button type="button" id="feedback-copy" class="secondary" disabled>Copy report</button></div>
+  <p class="fine" id="feedback-share-note">To send feedback, copy the report, open GitHub and paste it into a new issue. Check it before submitting: GitHub issues are public. Opening the form does not send your report.</p>
+  <a id="feedback-github" href="https://github.com/K-IT-TECH/inx-shield/issues/new" target="_blank" rel="noopener noreferrer">Open public GitHub issue form ↗</a>
+</dialog>
 <script src="popup.js"></script></body></html>

@@ -6,7 +6,7 @@ No account is needed to check a message. This is a guide to warning signs; it ca
 
 ## Gmail on your Windows laptop
 
-1. Open the live site → **Connect → Download extension** (version 1.2.1).
+1. Open the live site → **Connect → Download extension** (version 1.3.0).
 2. In File Explorer, right-click the downloaded ZIP → **Extract All**. Keep the extracted folder.
 3. In Chrome open `chrome://extensions`; in Edge open `edge://extensions`.
 4. Turn on **Developer mode** → **Load unpacked** → select the folder containing `manifest.json`.
@@ -16,7 +16,7 @@ No account is needed to check a message. This is a guide to warning signs; it ca
 
 **What to expect:** the result explains warning signs and a next step in English or Tamil. A visible address that differs from the underlying link is a reason to verify independently; tracking links can also cause a mismatch. Link names are shown as text and never opened. Editing captured text removes hidden-link context, with a notice. Several expanded emails, overly long text or too many links require a smaller selection.
 
-**Update an existing installation:** download the new ZIP, replace the old extracted files, open the Extensions page and click **Reload** for INX Shield. Check the extension details show **1.2.1**. If you choose a new folder, remove the old installation before using Load unpacked so there is only one copy.
+**Update an existing installation:** download the new ZIP, replace the old extracted files, open the Extensions page and click **Reload** for INX Shield. Check the extension details show **1.3.0**. If you choose a new folder, remove the old installation before using Load unpacked so there is only one copy.
 
 **தமிழில்:** ZIP-ஐ Extract All செய்யுங்கள் → Chrome/Edge Extensions page-ல் Developer mode → Load unpacked → `manifest.json` உள்ள folder. Gmail message-ஐ select செய்து INX Shield-ஐ click செய்யுங்கள் → text-ஐ எடு → சரிபார். பழைய extension இருந்தால் புதிய files-ஐ மாற்றி Reload அழுத்துங்கள்.
 
