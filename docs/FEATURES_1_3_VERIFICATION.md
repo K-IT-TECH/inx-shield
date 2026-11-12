@@ -1,10 +1,26 @@
 # INX Shield 1.3.0 verification
 
-Prepared 10 November 2026. Scope: a message flows from the web composer or extension through the local detector to a verdict and optional phrase explanations; wrong-result feedback flows through a local review dialog to copy/download and optional manual public GitHub submission.
+Prepared 10 November 2026; production verification completed 12 November 2026. Scope: a message flows from the web composer or extension through the local detector to a verdict and optional phrase explanations; wrong-result feedback flows through a local review dialog to copy/download and optional manual public GitHub submission.
 
 ## Release status
 
-Implementation and verification are complete locally. Publication to the public repository and production app was approved on 10 November 2026. Release identifiers and live verification will be recorded after deployment.
+Published on 10 November 2026 after explicit approval. The public app is live at https://inx-shield.vercel.app/ and the source is at https://github.com/K-IT-TECH/inx-shield.
+
+- Production source commit: `2145d45d5107c99f5787d826fe1389d72a14f5d8`.
+- Source tree: `dcf055f8fdeae51d9505c5264dc983be0101db57`, identical to the locally tested source tree.
+- Vercel production deployment: `dpl_HzTvYSDTjXRUQ2SRNPMPySimyrhc`, READY, with the public alias `inx-shield.vercel.app`. Status and source commit reconfirmed on 12 November 2026.
+- App and extension: `1.3.0`; detector: `rules-1.3.0`. Existing extension users need to download the updated ZIP and reload their unpacked extension.
+
+## Production verification
+
+These checks used synthetic text on the public app. The final documentation update does not change deployed application code.
+
+- 10 November: `Never share OTP with strangers, but do not delay and send your OTP to me.` visibly returned “Likely scam — pause here.” The highlight covered `send your OTP`; the preceding safety advice remained unhighlighted.
+- 12 November: `உங்கள் ரகசிய குறியீட்டை சொல்லுங்கள்.` visibly returned a Tamil likely-scam verdict and the secret-code request explanation. The original Tamil text remained intact around the highlighted matched span.
+- Feedback opened with no example selected. Including the synthetic Tamil example left copy/download disabled until the review checkbox was selected. Copy then succeeded, and the clipboard contained the reviewed example and `engine_version: rules-1.3.0`.
+- The feedback link points to a blank public GitHub issue form. No issue was submitted during verification.
+- 12 November: `Your account will not be blocked.` returned “No obvious warning signs,” without a stale warning or highlight from the previous check.
+- The browser console scan showed only errors from the browser automation extension, with no app-origin error observed in the inspected logs.
 
 ## Changes and examples
 
