@@ -83,3 +83,32 @@ test('Highlight explanations and feedback controls switch to Tamil', async () =>
   await p.click('#feedback-open');assert.match(p.get('#feedback-title').textContent,/மேம்படுத்த/);
   await p.click('#feedback-close');assert.equal(p.get('#feedback-dialog').open,false);
 });
+
+test('Popup context adds advice without clearing a warning and survives language changes', async () => {
+  const p=popup();p.get('#text').value='Job agent: pay a processing fee and send OTP.';await p.click('#check');
+  assert.match(p.get('#category-list').children[0].children[0].textContent,/Job/);
+  p.get('#context-expected').value='yes';p.get('#context-expected').listeners.change();
+  p.get('#context-sender').value='known';p.get('#context-sender').listeners.change();
+  p.get('#context-request').value='secret';p.get('#context-request').listeners.change();
+  assert.match(p.get('#title').textContent,/Likely scam/);
+  assert.match(p.get('#context-advice-title').textContent,/Pause/);
+  assert.equal(p.get('#context-advice').hidden,false);
+  p.get('#lang').value='ta';p.get('#lang').listeners.change();
+  assert.equal(p.get('#context-request').value,'secret');
+  assert.match(p.get('#context-advice-title').textContent,/நிறுத்துங்கள்/);
+  assert.match(p.get('#category-list').children[0].children[0].textContent,/வேலை/);
+  await p.click('#context-reset');assert.equal(p.get('#context-advice').hidden,true);
+  assert.match(p.get('#title').textContent,/மோசடியாக/);
+});
+test('Popup message edits and new captures clear context, categories and feedback drafts', async () => {
+  const p=popup();p.get('#text').value='Send your password.';await p.click('#check');
+  p.get('#context-request').value='secret';p.get('#context-request').listeners.change();
+  await p.click('#feedback-open');
+  p.get('#text').value='New message';p.get('#text').listeners.input();
+  assert.equal(p.get('#context-request').value,'unknown');
+  assert.equal(p.get('#category-list').children.length,0);
+  assert.equal(p.get('#context-advice').hidden,true);
+  assert.equal(p.get('#feedback-dialog').open,false);
+  await p.click('#check');p.get('#context-sender').value='unrecognized';p.get('#context-sender').listeners.change();
+  await p.click('#capture');assert.equal(p.get('#context-sender').value,'unknown');
+});

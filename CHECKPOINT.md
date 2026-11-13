@@ -1,5 +1,14 @@
 # Delivery checkpoint
 
+## Context, categories and evaluation 1.4.0 — 12 November 2026
+
+- Implements the agreed next update: eight possible scam-pattern labels, three optional English/Tamil context questions, and a reproducible synthetic detection evaluation. OCR, QR scanning and practice mode remain future suggestions.
+- Shared website/extension guidance adds next steps without changing or lowering the text verdict. Familiar senders are not treated as authenticated. Answers clear on new input/source/capture/check and are never added to history or feedback reports. No database or permission changes.
+- Direct English send/wire/remit/lend money requests now receive a payment warning; adjacent negation and sender promises are excluded. Engine/app/extension versions are `rules-1.4.0` / `1.4.0` / `1.4.0`.
+- Verification: 175 tests pass, production build and extension ZIP integrity pass. Desktop/narrow browser checks confirmed English/Tamil categories, extra guidance, unchanged strong warnings, translated retained answers and stale-state cleanup. The extension was tested as a bundled popup page; physical Android and installed-extension/Gmail acceptance remain separate.
+- The frozen 60-case synthetic development evaluation caught 22/24 scam scenarios with a warning versus 21/24 in 1.3.0; 6/24 benign scenarios received caution in both versions. Two indirect Tamil/Tanglish money requests remain missed. Twelve ambiguous cases are excluded from rates. These are not real-world accuracy estimates or independent holdout results. See evaluation/README.md and evaluation/RESULTS.md.
+- Local verification is complete; publication identifiers will be recorded after the authorized GitHub push and production deployment. See docs/FEATURES_1_4_VERIFICATION.md.
+
 ## Detection, highlights and feedback 1.3.0 — 10 November 2026
 
 - Implements the agreed first three priorities: expanded English/Tamil/Tanglish patterns, exact matched-phrase explanations, and reviewed wrong-result feedback. Screenshot OCR, context questions, QR scanning and practice mode remain future suggestions, not implemented features.

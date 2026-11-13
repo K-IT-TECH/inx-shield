@@ -1,6 +1,6 @@
 import { normalizeMessage, messageClauses } from './message-text.js';
 
-export const ENGINE_VERSION = 'rules-1.3.0';
+export const ENGINE_VERSION = 'rules-1.4.0';
 export const MAX_LENGTH = 12000;
 
 // Bounded, explainable patterns. This is not a trained language model.
@@ -12,7 +12,7 @@ const rules = [
   { id: 'urgency', weight: 1, pattern: /\b(?:urgent|immediately|act now|within \d+ (?:minutes?|hours?)|last warning|final notice|expires? today|udan[ae]|seekiram|seekkiram)\b|உடனே|உடனடியாக|கடைசி எச்சரிக்கை|சீக்கிரம்/iu },
   { id: 'threat', weight: 2, pattern: /\b(?:(?:account|card|sim).{0,25}?(?:block(?:ed|edhu)?|suspend(?:ed)?|deactivat(?:ed|e)|clos(?:ed|e))|arrest|digital arrest|legal action)\b|(?:கணக்கு|கார்டு|சிம்).{0,20}?(?:முடக்க|தடை|செயலிழ)|கைது/iu },
   { id: 'prize', weight: 2, pattern: /\b(?:you(?:'ve| have)? won|lottery|claim your prize|free money|guaranteed (?:profit|returns?)|double your money|panam (?:double|rettippu)|parisu (?:vizhunth|venr|win))\b|பரிசு வென்|பரிசை(?:ப்)? பெற|லாட்டரி|பணம் இரட்டிப்பு/iu },
-  { id: 'payment', weight: 2, request: true, pattern: /\b(?:pay.{0,25}?(?:fee|charge|deposit)|processing fee|release fee|advance payment|transfer.{0,20}?(?:money|funds)|gift cards?|crypto wallet|upi pin|(?:fee|deposit|panam|kaasu).{0,25}?(?:kattu(?:nga)?|seluthu(?:nga)?|anupp?(?:u|unga)|pay|transfer))\b|கட்டண.{0,20}?(?:செலுத்த|கட்டு)|முன்பணம்|பணம்.{0,15}?அனுப்பு/iu },
+  { id: 'payment', weight: 2, request: true, pattern: /\b(?:pay.{0,25}?(?:fee|charge|deposit)|processing fee|release fee|advance payment|(?:transfer|send|wire|remit|lend).{0,25}?(?:money|funds|cash)|gift cards?|crypto wallet|upi pin|(?:fee|deposit|panam|kaasu).{0,25}?(?:kattu(?:nga)?|seluthu(?:nga)?|anupp?(?:u|unga)|pay|transfer))\b|கட்டண.{0,20}?(?:செலுத்த|கட்டு)|முன்பணம்|பணம்.{0,15}?அனுப்பு/iu },
   { id: 'remote', weight: 3, request: true, pattern: /\b(?:install|download).{0,35}?(?:anydesk|teamviewer|apk|remote|screen.?shar)|\b(?:share|enable).{0,20}?(?:screen|screen.?shar)|\bscreen.?shar.{0,25}?(?:bank|payment)|\b(?:anydesk|teamviewer|apk).{0,25}?(?:install|download)\b|திரையை(?:ப்)? பகிர்|திரையை(?:ப்)? பகிரு/iu },
   { id: 'impersonation', weight: 1, pattern: /\b(?:bank|rbi|income tax|police|customs|courier|kyc|aadhaar)\b|வங்கி|காவல்துறை|ஆதார்/iu },
   { id: 'promotion', weight: 0, pattern: /\b(?:sale|discount|\d+% off|unsubscribe|limited offer|buy one|get one|shop now)\b|தள்ளுபடி|சலுகை|விற்பனை/iu }
@@ -40,7 +40,7 @@ function isAdvice(clause, match, previousEnd, id) {
   if (/\b(?:never|do not|don't|dont|must not|should not|shouldn't|avoid)(?:[\s,]+(?:ever|please|under any circumstances|on any account|ask (?:you )?to|tell (?:you )?to|need to))*[\s,]*$/iu.test(before)) return true;
   if (/(?:வேண்டாம்|வேண்டியதில்லை|கூடாது|மாட்டோம்|மாட்டேன்|அனுப்பாத|பகிராத|சொல்லாத|கொடுக்காத)/u.test(phrase + after.slice(0, 24))) return true;
   if (/\b(?:vendam|vendaam|koodathu|koodadhu|anupp?(?:atheenga|aathinga|aath[eai]|adhe)|soll(?:atheenga|aathinga)|pann(?:atheenga|aathinga))\b/iu.test(phrase + after)) return true;
-  if (id === 'credentials' && /\b(?:we|i|app|system|bank)\s+(?:will|can)\s+(?:automatically\s+)?$/iu.test(before) && /^(?:send|give)\b/iu.test(phrase)) return true;
+  if (['credentials', 'payment'].includes(id) && /\b(?:we|i|app|system|bank)\s+(?:will|can)\s+(?:automatically\s+)?$/iu.test(before) && /^(?:send|give|transfer|wire|remit|lend)\b/iu.test(phrase)) return true;
   return false;
 }
 function negatedThreat(text) {

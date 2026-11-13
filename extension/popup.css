@@ -10,3 +10,15 @@ dialog::backdrop{background:#102e2580}.feedback-heading{display:flex;gap:10px;al
 .feedback-check{display:flex;align-items:flex-start;gap:8px}.feedback-check input{margin-top:5px;flex-shrink:0}
 #feedback-dialog textarea{font-size:12px;min-height:90px}#feedback-preview{min-height:120px;max-height:180px;font:11px/1.5 ui-monospace,monospace}
 .feedback-actions{display:flex;gap:8px}#feedback-github{font-size:12px;color:#174f3d}#feedback-dialog button:disabled{cursor:not-allowed}
+
+/* Shared visual treatment for temporary pattern labels and optional context. */
+.category-panel{border:1px solid #d9e1d4;border-radius:10px;padding:14px;margin:18px 0;background:#fbfcf8}
+.category-panel h4{font-size:14px;margin:0 0 6px}.category-panel>.fine{margin:0 0 12px}
+.category-list{list-style:none;padding:0;margin:0;display:grid;gap:12px}.category-list li{margin:0;padding-left:12px;border-left:3px solid #a9bc90;overflow-wrap:anywhere}
+.category-list strong{font-size:13px;line-height:1.6;display:block}.category-list p{font-size:12px;line-height:1.7;margin:4px 0 0;color:#526958}
+.context-details{border:1px solid #cbd8c6;border-radius:10px;padding:14px;margin:18px 0;background:#fff}
+.context-details summary{font-weight:600;font-size:14px;line-height:1.6;cursor:pointer}.context-fields{display:grid;gap:8px;min-width:0}
+.context-fields label{font-size:12px;line-height:1.6;margin:10px 0 0;font-weight:600}.context-fields select{box-sizing:border-box;min-width:0;max-width:100%;width:100%;border:1px solid #bdcdb8;border-radius:8px;padding:10px;background:#fafbf8;color:#173b2b;font-size:12px}
+#context-reset{font-size:12px;width:auto;margin:10px 0;padding:7px 0;background:none;border:0;color:#174f3d;cursor:pointer}#context-reset:disabled{opacity:.5;cursor:default}
+.context-advice{padding:12px;border-left:3px solid #8c9d72;background:#f4f7ef;overflow-wrap:anywhere}.context-advice.verify{border-color:#b98232;background:#fff8e6}.context-advice.pause{border-color:#a64625;background:#fff0e8}
+.context-advice h4{margin:0 0 8px;font-size:13px}.context-advice ul{padding-left:18px;margin:0}.context-advice li{font-size:12px;line-height:1.7;margin-bottom:6px}#context-save-note{margin:12px 0 0}

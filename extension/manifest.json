@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "INX Shield \u2014 message check",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Check selected text, an opened Gmail message and its web-link destinations locally in English or Tamil.",
   "permissions": [
     "activeTab",

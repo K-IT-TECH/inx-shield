@@ -7,7 +7,21 @@
 <label for="text" id="label">Review the message or paste one below</label><textarea id="text" rows="7" maxlength="12000" aria-describedby="note"></textarea>
 <details id="links" hidden><summary id="links-title">Link destinations (not opened)</summary><ul id="link-list"></ul><p id="links-note">Names only. Redirects, attachments and sender identity are not verified.</p></details>
 <button id="check" class="primary">Check message</button><p id="error" role="alert"></p>
-<section id="result" hidden aria-live="polite" tabindex="-1" aria-labelledby="title"><h2 id="title"></h2><p id="description"></p><details id="evidence-details" class="evidence-details" hidden><summary id="evidence-title">See highlighted phrases</summary><p id="evidence-note" class="fine">Tap a highlight to see why it was noticed. These are clues, not proof. This text is not saved.</p><div id="evidence-text" class="evidence-text"></div><p id="evidence-explanation" class="fine" role="status"></p></details><ul id="reasons"></ul><h3 id="next-title">Next step</h3><p id="next"></p><button id="feedback-open" type="button">Wrong result?</button></section>
+<section id="result" hidden aria-live="polite" tabindex="-1" aria-labelledby="title"><h2 id="title"></h2><p id="description"></p><section id="category-panel" class="category-panel" aria-labelledby="category-title" hidden><h4 id="category-title">Possible scam patterns</h4><p id="category-note" class="fine">Based on wording, not a verified identity or confirmed scam.</p><ul id="category-list" class="category-list"></ul></section><details id="evidence-details" class="evidence-details" hidden><summary id="evidence-title">See highlighted phrases</summary><p id="evidence-note" class="fine">Tap a highlight to see why it was noticed. These are clues, not proof. This text is not saved.</p><div id="evidence-text" class="evidence-text"></div><p id="evidence-explanation" class="fine" role="status"></p></details><ul id="reasons"></ul><h3 id="next-title">Next step</h3><p id="next"></p><details id="context-details" class="context-details">
+  <summary id="context-title">Add context for your next step</summary>
+  <p id="context-intro" class="fine">Optional. Answers stay here and clear with a new message. They add guidance without removing text warnings.</p>
+  <div class="context-fields">
+    <label for="context-expected" id="context-expected-label">Were you expecting this message?</label>
+    <select id="context-expected"><option value="unknown" id="context-expected-unknown">Not sure / skip</option><option value="yes" id="context-expected-yes">Yes, I expected it</option><option value="no" id="context-expected-no">No, it was unexpected</option></select>
+    <label for="context-sender" id="context-sender-label">Do you recognize the sender?</label>
+    <select id="context-sender"><option value="unknown" id="context-sender-unknown">Not sure / skip</option><option value="known" id="context-sender-known">I recognize the name or number</option><option value="unrecognized" id="context-sender-unrecognized">I do not recognize them</option></select>
+    <label for="context-request" id="context-request-label">What are they asking you to do?</label>
+    <select id="context-request"><option value="unknown" id="context-request-unknown">Not sure / skip</option><option value="none" id="context-request-none">No money, secrets or access</option><option value="money" id="context-request-money">Send money or pay a fee</option><option value="secret" id="context-request-secret">Share a code or password</option><option value="access" id="context-request-access">Install an app or share my screen</option></select>
+  </div>
+  <button type="button" id="context-reset" class="text-button" disabled>Clear answers</button>
+  <div id="context-advice" class="context-advice" role="status" aria-live="polite" aria-atomic="true" hidden><h4 id="context-advice-title"></h4><ul id="context-advice-list"></ul></div>
+  <p id="context-save-note" class="fine">Saved results and feedback reports contain the text check only. These answers and extra guidance are not saved.</p>
+</details><button id="feedback-open" type="button">Wrong result?</button></section>
 <p class="note" id="note">Rule-based guidance, not a guarantee. No automatic inbox scanning or message uploads. Pasted text cannot reveal hidden links.</p>
 
 <dialog id="feedback-dialog" aria-labelledby="feedback-title" aria-describedby="feedback-intro">

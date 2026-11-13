@@ -1,0 +1,757 @@
+{
+  "dataset": "INX Shield synthetic challenge set 1",
+  "datasetSha256": "486c8ea5c829dd6f7310fb61e8512e66345177020ed5e5a8c671ce70eab2506f",
+  "engine": "rules-1.4.0",
+  "provenance": "60 synthetic examples authored for development on 2026-11-12 before candidate implementation. Scenario labels are author judgements, not verified user reports. No private messages or real links. This is not an independent holdout set.",
+  "interpretation": "Synthetic, author-labelled development challenge set; not a held-out or independently validated real-world accuracy estimate. A warning means scam OR caution. Ambiguous examples are excluded from precision/recall and false-alarm rates. Context answers are not used.",
+  "overall": {
+    "total": 60,
+    "scams": 24,
+    "benign": 24,
+    "ambiguous": 12,
+    "scamWarnings": 22,
+    "missedScams": 2,
+    "falseAlarms": 6,
+    "benignWithoutWarning": 18,
+    "warningRecall": 0.9166666666666666,
+    "falseAlarmRate": 0.25,
+    "warningPrecision": 0.7857142857142857,
+    "likelyScamPrecision": 1
+  },
+  "byLanguage": {
+    "en": {
+      "total": 20,
+      "scams": 8,
+      "benign": 8,
+      "ambiguous": 4,
+      "scamWarnings": 8,
+      "missedScams": 0,
+      "falseAlarms": 2,
+      "benignWithoutWarning": 6,
+      "warningRecall": 1,
+      "falseAlarmRate": 0.25,
+      "warningPrecision": 0.8,
+      "likelyScamPrecision": 1
+    },
+    "ta": {
+      "total": 20,
+      "scams": 8,
+      "benign": 8,
+      "ambiguous": 4,
+      "scamWarnings": 7,
+      "missedScams": 1,
+      "falseAlarms": 2,
+      "benignWithoutWarning": 6,
+      "warningRecall": 0.875,
+      "falseAlarmRate": 0.25,
+      "warningPrecision": 0.7777777777777778,
+      "likelyScamPrecision": 1
+    },
+    "tanglish": {
+      "total": 20,
+      "scams": 8,
+      "benign": 8,
+      "ambiguous": 4,
+      "scamWarnings": 7,
+      "missedScams": 1,
+      "falseAlarms": 2,
+      "benignWithoutWarning": 6,
+      "warningRecall": 0.875,
+      "falseAlarmRate": 0.25,
+      "warningPrecision": 0.7777777777777778,
+      "likelyScamPrecision": 1
+    }
+  },
+  "outcomes": [
+    {
+      "id": "en-scam-01",
+      "language": "en",
+      "label": "scam",
+      "text": "Reply with the login code sent to your phone so I can unlock your banking app.",
+      "rationale": "Unsolicited person seeking a login secret.",
+      "verdict": "scam",
+      "warning": true,
+      "reasons": [
+        "credentials"
+      ]
+    },
+    {
+      "id": "en-scam-02",
+      "language": "en",
+      "label": "scam",
+      "text": "You are hired for our remote job. Pay a registration fee to receive your offer letter.",
+      "rationale": "Fictional fraudulent recruiter collecting an upfront fee.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "en-scam-03",
+      "language": "en",
+      "label": "scam",
+      "text": "Courier delivery stopped. Pay a redelivery fee at https://parcel-help.example/retry.",
+      "rationale": "Fictional phishing delivery notice with a fee link.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment",
+        "impersonation",
+        "link"
+      ]
+    },
+    {
+      "id": "en-scam-04",
+      "language": "en",
+      "label": "scam",
+      "text": "Bank support: install AnyDesk so we can complete your refund.",
+      "rationale": "Fictional impersonated support asking for remote access.",
+      "verdict": "scam",
+      "warning": true,
+      "reasons": [
+        "remote",
+        "impersonation"
+      ]
+    },
+    {
+      "id": "en-scam-05",
+      "language": "en",
+      "label": "scam",
+      "text": "You have won our lottery. Transfer money for the release fee first.",
+      "rationale": "Fictional advance-fee prize scam.",
+      "verdict": "scam",
+      "warning": true,
+      "reasons": [
+        "prize",
+        "payment"
+      ]
+    },
+    {
+      "id": "en-scam-06",
+      "language": "en",
+      "label": "scam",
+      "text": "Invest with us for guaranteed returns. Double your money every day.",
+      "rationale": "Fictional fraudulent guaranteed-return investment solicitation.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "prize"
+      ]
+    },
+    {
+      "id": "en-scam-07",
+      "language": "en",
+      "label": "scam",
+      "text": "Mum, my old phone broke. This is my new number. Can you send some money to my friend?",
+      "rationale": "Fictional family impersonation; deliberately indirect wording.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "en-scam-08",
+      "language": "en",
+      "label": "scam",
+      "text": "Your SIM will be deactivated. Complete KYC immediately at https://sim-verify.example/update.",
+      "rationale": "Fictional account-threat phishing link.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "urgency",
+        "threat",
+        "impersonation",
+        "link"
+      ]
+    },
+    {
+      "id": "en-benign-01",
+      "language": "en",
+      "label": "benign",
+      "text": "Never share your password or OTP with a caller.",
+      "rationale": "Safety advice, with no request for a secret.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "en-benign-02",
+      "language": "en",
+      "label": "benign",
+      "text": "Your account will not be suspended. No action is required.",
+      "rationale": "Synthetic genuine reassurance notice.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "en-benign-03",
+      "language": "en",
+      "label": "benign",
+      "text": "Our shop has a weekend discount. Reply STOP to unsubscribe.",
+      "rationale": "Synthetic genuine promotional message.",
+      "verdict": "promotion",
+      "warning": false,
+      "reasons": [
+        "promotion"
+      ]
+    },
+    {
+      "id": "en-benign-04",
+      "language": "en",
+      "label": "benign",
+      "text": "The parcel was delivered to reception this afternoon.",
+      "rationale": "Synthetic genuine delivery notification.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "en-benign-05",
+      "language": "en",
+      "label": "benign",
+      "text": "The interview is scheduled for Friday. No payment is required.",
+      "rationale": "Synthetic genuine interview invitation.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "en-benign-06",
+      "language": "en",
+      "label": "benign",
+      "text": "Please pay the tuition fee at the school office this week.",
+      "rationale": "Synthetic legitimate tuition reminder; deliberate fee false-alarm challenge.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "en-benign-07",
+      "language": "en",
+      "label": "benign",
+      "text": "Here is the school newsletter: https://bit.ly/class-letter",
+      "rationale": "Synthetic genuine newsletter; short-link caution is a deliberate false-alarm challenge.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "short_link",
+        "link"
+      ]
+    },
+    {
+      "id": "en-benign-08",
+      "language": "en",
+      "label": "benign",
+      "text": "Please send the source code for the class project when you are ready.",
+      "rationale": "Programming request, not a secret-code request.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "en-ambiguous-01",
+      "language": "en",
+      "label": "ambiguous",
+      "text": "You have been selected. Contact our coordinator for details.",
+      "rationale": "No evidence establishes what selection or sender this is.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "en-ambiguous-02",
+      "language": "en",
+      "label": "ambiguous",
+      "text": "Confirm your information at https://service.example/update.",
+      "rationale": "A link and vague request do not authenticate the service.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": [
+        "link"
+      ]
+    },
+    {
+      "id": "en-ambiguous-03",
+      "language": "en",
+      "label": "ambiguous",
+      "text": "hi",
+      "rationale": "Too little information.",
+      "verdict": "unclear",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "en-ambiguous-04",
+      "language": "en",
+      "label": "ambiguous",
+      "text": "Payment pending. Please call us.",
+      "rationale": "Could be a genuine reminder or an impersonation.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "ta-scam-01",
+      "language": "ta",
+      "label": "scam",
+      "text": "உங்கள் OTP எண்ணை எனக்கு அனுப்புங்கள். கணக்கை சரிசெய்கிறேன்.",
+      "rationale": "Synthetic impersonator requests an OTP.",
+      "verdict": "scam",
+      "warning": true,
+      "reasons": [
+        "credentials"
+      ]
+    },
+    {
+      "id": "ta-scam-02",
+      "language": "ta",
+      "label": "scam",
+      "text": "வேலை வாய்ப்பு உறுதி. பதிவு கட்டணத்தை செலுத்துங்கள்.",
+      "rationale": "Synthetic fraudulent job offer requesting an upfront fee.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "ta-scam-03",
+      "language": "ta",
+      "label": "scam",
+      "text": "உங்கள் பார்சல் நிறுத்தப்பட்டுள்ளது. விநியோக கட்டணம் செலுத்துங்கள்: https://parcel.example/pay",
+      "rationale": "Synthetic parcel phishing fee request.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment",
+        "link"
+      ]
+    },
+    {
+      "id": "ta-scam-04",
+      "language": "ta",
+      "label": "scam",
+      "text": "வங்கி உதவி மையம்: AnyDesk install செய்யுங்கள்.",
+      "rationale": "Synthetic bank impersonator requesting remote access.",
+      "verdict": "scam",
+      "warning": true,
+      "reasons": [
+        "remote",
+        "impersonation"
+      ]
+    },
+    {
+      "id": "ta-scam-05",
+      "language": "ta",
+      "label": "scam",
+      "text": "லாட்டரி பரிசை பெற முன்பணம் அனுப்புங்கள்.",
+      "rationale": "Synthetic advance-fee lottery scam.",
+      "verdict": "scam",
+      "warning": true,
+      "reasons": [
+        "prize",
+        "payment"
+      ]
+    },
+    {
+      "id": "ta-scam-06",
+      "language": "ta",
+      "label": "scam",
+      "text": "முதலீடு செய்யுங்கள். உங்கள் பணம் இரட்டிப்பு ஆகும்.",
+      "rationale": "Synthetic fraudulent investment doubling promise.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "prize"
+      ]
+    },
+    {
+      "id": "ta-scam-07",
+      "language": "ta",
+      "label": "scam",
+      "text": "அம்மா, என் பழைய போன் உடைந்துவிட்டது. இது என் புதிய எண். நண்பருக்கு உதவி செய்ய பணம் வேண்டும்.",
+      "rationale": "Synthetic family impersonation with an indirect money request.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "ta-scam-08",
+      "language": "ta",
+      "label": "scam",
+      "text": "உங்கள் வங்கி கணக்கு முடக்கப்படும். உடனே https://account.example/verify திறக்கவும்.",
+      "rationale": "Synthetic account-threat phishing notice.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "urgency",
+        "threat",
+        "impersonation",
+        "link"
+      ]
+    },
+    {
+      "id": "ta-benign-01",
+      "language": "ta",
+      "label": "benign",
+      "text": "OTP யாரிடமும் பகிர வேண்டாம்.",
+      "rationale": "Safety advice with no request for a secret.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "ta-benign-02",
+      "language": "ta",
+      "label": "benign",
+      "text": "உங்கள் கணக்கு முடக்கப்படாது. கவலை வேண்டாம்.",
+      "rationale": "Synthetic genuine reassurance notice.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "ta-benign-03",
+      "language": "ta",
+      "label": "benign",
+      "text": "இந்த வாரம் கடையில் தள்ளுபடி உள்ளது.",
+      "rationale": "Synthetic genuine promotion.",
+      "verdict": "promotion",
+      "warning": false,
+      "reasons": [
+        "promotion"
+      ]
+    },
+    {
+      "id": "ta-benign-04",
+      "language": "ta",
+      "label": "benign",
+      "text": "உங்கள் பார்சல் அலுவலகத்தில் ஒப்படைக்கப்பட்டது.",
+      "rationale": "Synthetic genuine delivery notification.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "ta-benign-05",
+      "language": "ta",
+      "label": "benign",
+      "text": "நாளை வேலை நேர்காணல் நடைபெறும். கட்டணம் எதுவும் இல்லை.",
+      "rationale": "Synthetic genuine interview notice with no fee.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "ta-benign-06",
+      "language": "ta",
+      "label": "benign",
+      "text": "பள்ளி அலுவலகத்தில் கல்வி கட்டணம் செலுத்துங்கள்.",
+      "rationale": "Synthetic legitimate tuition reminder; fee false-alarm challenge.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "ta-benign-07",
+      "language": "ta",
+      "label": "benign",
+      "text": "பள்ளி செய்திகளை இங்கே படியுங்கள்: https://bit.ly/school-ta",
+      "rationale": "Synthetic genuine newsletter; short-link false-alarm challenge.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "short_link",
+        "link"
+      ]
+    },
+    {
+      "id": "ta-benign-08",
+      "language": "ta",
+      "label": "benign",
+      "text": "நாளை காலை கல்லூரியில் சந்திப்போம்.",
+      "rationale": "Synthetic everyday meeting plan.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "ta-ambiguous-01",
+      "language": "ta",
+      "label": "ambiguous",
+      "text": "நீங்கள் தேர்வு செய்யப்பட்டுள்ளீர்கள். விவரங்களுக்கு தொடர்பு கொள்ளுங்கள்.",
+      "rationale": "Selection claim without enough context.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "ta-ambiguous-02",
+      "language": "ta",
+      "label": "ambiguous",
+      "text": "தகவலை உறுதிசெய்யுங்கள்: https://service.example/ta",
+      "rationale": "Unknown service and purpose.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": [
+        "link"
+      ]
+    },
+    {
+      "id": "ta-ambiguous-03",
+      "language": "ta",
+      "label": "ambiguous",
+      "text": "வணக்கம்",
+      "rationale": "Too little information.",
+      "verdict": "unclear",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "ta-ambiguous-04",
+      "language": "ta",
+      "label": "ambiguous",
+      "text": "பணம் நிலுவையில் உள்ளது. அழைக்கவும்.",
+      "rationale": "Unknown payment reminder.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "tanglish-scam-01",
+      "language": "tanglish",
+      "label": "scam",
+      "text": "Unga login OTP ah sollunga, naan account open panren.",
+      "rationale": "Synthetic impersonator requesting a secret.",
+      "verdict": "scam",
+      "warning": true,
+      "reasons": [
+        "credentials"
+      ]
+    },
+    {
+      "id": "tanglish-scam-02",
+      "language": "tanglish",
+      "label": "scam",
+      "text": "Work from home job confirm. Registration fee kattunga offer letter varum.",
+      "rationale": "Synthetic fraudulent job offer requesting an upfront fee.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "tanglish-scam-03",
+      "language": "tanglish",
+      "label": "scam",
+      "text": "Unga parcel hold la iruku. Delivery fee seluthunga https://parcel.example/tamil",
+      "rationale": "Synthetic parcel-fee phishing notice.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment",
+        "link"
+      ]
+    },
+    {
+      "id": "tanglish-scam-04",
+      "language": "tanglish",
+      "label": "scam",
+      "text": "Bank support pesuren. AnyDesk install pannunga refund varum.",
+      "rationale": "Synthetic bank impersonation and remote-access request.",
+      "verdict": "scam",
+      "warning": true,
+      "reasons": [
+        "remote",
+        "impersonation"
+      ]
+    },
+    {
+      "id": "tanglish-scam-05",
+      "language": "tanglish",
+      "label": "scam",
+      "text": "Lottery prize win pannitinga. Processing fee anuppunga.",
+      "rationale": "Synthetic advance-fee prize scam.",
+      "verdict": "scam",
+      "warning": true,
+      "reasons": [
+        "prize",
+        "payment"
+      ]
+    },
+    {
+      "id": "tanglish-scam-06",
+      "language": "tanglish",
+      "label": "scam",
+      "text": "Invest pannunga, panam double aagum. Guaranteed returns daily.",
+      "rationale": "Synthetic fraudulent investment promise.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "prize"
+      ]
+    },
+    {
+      "id": "tanglish-scam-07",
+      "language": "tanglish",
+      "label": "scam",
+      "text": "Amma old phone damage. Idhu new number. Friend ku konjam cash venum help pannunga.",
+      "rationale": "Synthetic indirect family impersonation request.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "tanglish-scam-08",
+      "language": "tanglish",
+      "label": "scam",
+      "text": "Bank account block aagum. Udane KYC verify pannunga https://bank.example/check",
+      "rationale": "Synthetic account-threat phishing notice.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "urgency",
+        "threat",
+        "impersonation",
+        "link"
+      ]
+    },
+    {
+      "id": "tanglish-benign-01",
+      "language": "tanglish",
+      "label": "benign",
+      "text": "OTP share panna vendam. Yaar ketaalum sollatheenga.",
+      "rationale": "Safety advice.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "tanglish-benign-02",
+      "language": "tanglish",
+      "label": "benign",
+      "text": "Unga account block aagathu. Neenga onnum panna vendam.",
+      "rationale": "Synthetic genuine reassurance notice.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "tanglish-benign-03",
+      "language": "tanglish",
+      "label": "benign",
+      "text": "Weekend sale iruku. Shoes discount. Unsubscribe panna STOP reply pannunga.",
+      "rationale": "Synthetic genuine promotion.",
+      "verdict": "promotion",
+      "warning": false,
+      "reasons": [
+        "promotion"
+      ]
+    },
+    {
+      "id": "tanglish-benign-04",
+      "language": "tanglish",
+      "label": "benign",
+      "text": "Unga parcel office la delivered aayiduchu.",
+      "rationale": "Synthetic genuine delivery notification.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "tanglish-benign-05",
+      "language": "tanglish",
+      "label": "benign",
+      "text": "Job interview Friday iruku. Fee illa, payment thevai illa.",
+      "rationale": "Synthetic genuine interview without payment.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "tanglish-benign-06",
+      "language": "tanglish",
+      "label": "benign",
+      "text": "College exam fee kattunga, office counter la receipt vangikonga.",
+      "rationale": "Synthetic legitimate college fee reminder; false-alarm challenge.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "tanglish-benign-07",
+      "language": "tanglish",
+      "label": "benign",
+      "text": "School newsletter inga iruku https://bit.ly/class-tanglish",
+      "rationale": "Synthetic genuine newsletter; short-link false-alarm challenge.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "short_link",
+        "link"
+      ]
+    },
+    {
+      "id": "tanglish-benign-08",
+      "language": "tanglish",
+      "label": "benign",
+      "text": "Naalaiku project source code anuppu, review pannalam.",
+      "rationale": "Programming request, not a credential request.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "tanglish-ambiguous-01",
+      "language": "tanglish",
+      "label": "ambiguous",
+      "text": "Neenga select aagitinga. Coordinator ah contact pannunga.",
+      "rationale": "Selection claim with no reliable sender context.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "tanglish-ambiguous-02",
+      "language": "tanglish",
+      "label": "ambiguous",
+      "text": "Details confirm pannunga https://service.example/form",
+      "rationale": "Unknown service and purpose.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": [
+        "link"
+      ]
+    },
+    {
+      "id": "tanglish-ambiguous-03",
+      "language": "tanglish",
+      "label": "ambiguous",
+      "text": "hi bro",
+      "rationale": "Too little information.",
+      "verdict": "unclear",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "tanglish-ambiguous-04",
+      "language": "tanglish",
+      "label": "ambiguous",
+      "text": "Payment pending iruku. Call pannunga.",
+      "rationale": "Unknown payment reminder.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    }
+  ]
+}

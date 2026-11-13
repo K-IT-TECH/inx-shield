@@ -1,3 +1,4 @@
+import {connectInsights} from '../src/insights.js';
 import {renderEvidence} from '../src/evidence.js';
 import {connectFeedback} from '../src/feedback.js';
 import {REASONS} from '../src/detector.js';
@@ -8,7 +9,9 @@ const $=s=>document.querySelector(s);
 let lang=0, last=null, captured=null, status='', error='';
 const pick=a=>a[lang], pair=(en,ta)=>lang?ta:en;
 const feedback=connectFeedback({getContext:()=>last?{result:last,text:$('#text').value,source:captured?.kind==='gmail'?'email':'other'}:null,language:()=>lang?'ta':'en'});
-function resetDetails(){feedback.reset();$('#evidence-text').replaceChildren();$('#evidence-explanation').textContent='';$('#evidence-details').open=false;$('#evidence-details').hidden=true;}
+const insights=connectInsights({language:()=>lang?'ta':'en'});
+insights.translate();
+function resetDetails(){feedback.reset();insights.reset();$('#evidence-text').replaceChildren();$('#evidence-explanation').textContent='';$('#evidence-details').open=false;$('#evidence-details').hidden=true;}
 const errors={
   no_message:['Select the message text first, or open one email in Gmail. You can also paste below.','Message text-ஐ தேர்வு செய்யுங்கள் அல்லது Gmail-ல் ஒரு email-ஐத் திறக்கவும். கீழே paste செய்யலாம்.'],
   multiple_messages:['More than one email is expanded. Select the exact message text you want to check.','ஒன்றுக்கு மேற்பட்ட email திறந்துள்ளது. சோதிக்க வேண்டிய message text-ஐத் தேர்வு செய்யுங்கள்.'],
@@ -39,6 +42,7 @@ function renderLinks(){
 }
 function render(){
   if(!last)return;
+  insights.render($('#text').value,last);
   $('#result').hidden=false;
   $('#evidence-details').hidden=!last.evidence?.length;
   $('#evidence-title').textContent=pair('See highlighted phrases','குறிப்பிட்ட சொற்களைப் பாருங்கள்');
@@ -57,7 +61,7 @@ $('#lang').addEventListener('change',()=>{
   lang=$('#lang').value==='ta'?1:0;document.documentElement.lang=lang?'ta':'en';
   const content={intro:['A second look before you click. Your message stays on this device.','Click செய்யும் முன் சரிபாருங்கள். Message இந்த சாதனத்திலேயே இருக்கும்.'],capture:['Use selected text / opened Gmail message','தேர்ந்தெடுத்த text / திறந்த Gmail message-ஐ எடு'],label:['Review the message or paste one below','Message-ஐ சரிபார்க்கவும் அல்லது கீழே paste செய்யவும்'],check:['Check message','Message-ஐ சரிபார்'],'next-title':['Next step','அடுத்த படி'],'links-title':['Link destinations (not opened)','Link செல்லும் இடங்கள் (திறக்கப்படாது)'],'links-note':['Names only. Redirects, attachments and sender identity are not verified.','பெயர்கள் மட்டும். Redirects, attachments அல்லது sender சரிபார்க்கப்படவில்லை.'],note:['Rule-based guidance, not a guarantee. No automatic inbox scanning or message uploads. Pasted text cannot reveal hidden links.','விதிகளின் அடிப்படையிலான வழிகாட்டி; உத்தரவாதம் அல்ல. Inbox தானாகப் படிக்கப்படாது. Message upload ஆகாது. Paste செய்த text-ல் மறைந்த link தெரியாது.']};
   for(const [id,words]of Object.entries(content))$('#'+id).textContent=pick(words);
-  feedback.translate();renderStatus();renderLinks();render();
+  feedback.translate();insights.translate();renderStatus();renderLinks();render();
 });
 $('#capture').addEventListener('click',async()=>{
   const button=$('#capture');button.disabled=true;
