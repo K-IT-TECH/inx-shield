@@ -1,6 +1,6 @@
 # INX Shield 1.4.0 verification
 
-Prepared 12 November 2026. Story: pasted or deliberately captured text flows through the local detector to a verdict, phrase highlights and possible scam-pattern labels; optional context answers add separate next-step guidance. A developer command evaluates the detector against a fixed synthetic dataset.
+Prepared 12 November 2026; published and verified live on 13 November 2026. Story: pasted or deliberately captured text flows through the local detector to a verdict, phrase highlights and possible scam-pattern labels; optional context answers add separate next-step guidance. A developer command evaluates the detector against a fixed synthetic dataset.
 
 ## Scope and behavior
 
@@ -39,7 +39,14 @@ Two indirect family-impersonation money requests in Tamil/Tanglish remain missed
 
 ## Publication
 
-Local verification is complete. Production source and deployment identifiers will be recorded after the authorized GitHub publication and deployment.
+Published to https://github.com/K-IT-TECH/inx-shield and https://inx-shield.vercel.app/ on 13 November 2026.
+
+- Production source commit: `fc88c3964ffa831eb95fe3f2e84aafa2536c94c2`.
+- Source tree: `27f333d28edb5fb8c46606f32616de260f95c8b5`, identical to the locally verified source tree.
+- Vercel deployment: `dpl_54ZnJzAj6USFnFXN2iTtK7RwU6d6`, READY, production target, correct Git commit and public alias `inx-shield.vercel.app`, with no alias error.
+- Live browser checks confirmed job/task-fee and secret-code categories, an unchanged scam warning after selecting a familiar sender, additional pause guidance, English/Tamil translation with retained answers, and cleanup after editing the message. A weak Tanglish text then gained separate money-request verification guidance from the user's selected context.
+- No app-origin warning or error appeared in the inspected live browser logs. No history record or feedback issue was submitted during live verification.
+- This final documentation update does not change deployed application code. Existing extension users need the new 1.4.0 ZIP and Reload.
 
 ## Remaining limits
 
