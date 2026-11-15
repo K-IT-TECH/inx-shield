@@ -1,7 +1,7 @@
 {
   "dataset": "INX Shield synthetic challenge set 1",
   "datasetSha256": "486c8ea5c829dd6f7310fb61e8512e66345177020ed5e5a8c671ce70eab2506f",
-  "engine": "rules-1.4.0",
+  "engine": "rules-1.4.1",
   "provenance": "60 synthetic examples authored for development on 2026-11-12 before candidate implementation. Scenario labels are author judgements, not verified user reports. No private messages or real links. This is not an independent holdout set.",
   "interpretation": "Synthetic, author-labelled development challenge set; not a held-out or independently validated real-world accuracy estimate. A warning means scam OR caution. Ambiguous examples are excluded from precision/recall and false-alarm rates. Context answers are not used.",
   "overall": {

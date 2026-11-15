@@ -1,5 +1,13 @@
 # Delivery checkpoint
 
+## Audit fixes 1.4.1 — 15 November 2026
+
+- Fixed bilingual validation, account-threat negation scope, uppercase WWW link-label comparison, stale extension captures, cloud account/refresh races, sign-out error handling and duplicate/pending-save state.
+- 208 tests pass; build, ZIP integrity and dependency audit pass (0 known dependency vulnerabilities). Desktop and 320/390/768px browser checks, summary-only history export, reviewed feedback and final-build sample sharing passed. See [audit report](docs/AUDIT_1_4_1.md).
+- Resumed the existing inactive Supabase project and verified ACTIVE_HEALTHY. Read-only checks confirmed owner RLS, no anonymous grants, no authenticated UPDATE, and no security-advisor lints. No schema, account, auth or permission changes.
+- Frozen synthetic evaluation remains 22/24 scam warnings, two misses and six benign cautions. Exact original user examples and physical Android/Gmail/pilot-account acceptance remain unverified.
+- Local release candidate: app/extension 1.4.1, engine rules-1.4.1. Publication evidence follows after deployment.
+
 ## Context, categories and evaluation 1.4.0 — 12 November 2026
 
 - Implements the agreed next update: eight possible scam-pattern labels, three optional English/Tamil context questions, and a reproducible synthetic detection evaluation. OCR, QR scanning and practice mode remain future suggestions.

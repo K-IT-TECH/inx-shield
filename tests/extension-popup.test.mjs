@@ -4,7 +4,7 @@ import vm from 'node:vm';
 import {build} from 'esbuild';
 const {outputFiles}=await build({entryPoints:['extension/popup-source.js'],bundle:true,minify:true,format:'iife',target:'es2022',write:false});
 const bundle=outputFiles[0].text;
-function popup(){
+function popup({captureWait=null}={}){
   const elements=new Map();
   const element=()=>({value:'',textContent:'',hidden:true,open:false,checked:false,children:[],listeners:{},setAttribute(key,value){this[key]=value;},showModal(){this.open=true;},close(){this.open=false;this.listeners.close?.();},addEventListener(type,fn){this.listeners[type]=fn;},replaceChildren(){this.children=[];},append(child){this.children.push(child);},focus(){}});
   const get=id=>{if(!elements.has(id))elements.set(id,element());return elements.get(id);};
@@ -12,7 +12,7 @@ function popup(){
   const link={href:'https://attacker.example/private?token=secret',innerText:'https://bank.example',getBoundingClientRect:()=>({height:20})};
   const body={innerText:'Please review the school newsletter.',querySelectorAll:()=>[link],getBoundingClientRect:()=>({height:60})};
   const captureContext={URL,location:{hostname:'mail.google.com'},window:{getSelection:()=>({toString:()=>''})},document:{querySelectorAll:()=>[body]},getComputedStyle:()=>({display:'block',visibility:'visible'})};
-  const copied=[];const context={URL,navigator:{clipboard:{writeText:async text=>{copied.push(text);}}},document:{documentElement:{lang:'en'},querySelector:get,getElementById:id=>get('#'+id),createElement:element},chrome:{tabs:{query:async()=>[{id:5}]},scripting:{executeScript:async({target,func})=>{calls++;assert.equal(target.tabId,5);if(restricted)throw Error('restricted page');return [{result:vm.runInNewContext('('+func.toString()+')()',captureContext)}];}}}};
+  const copied=[];const context={URL,navigator:{clipboard:{writeText:async text=>{copied.push(text);}}},document:{documentElement:{lang:'en'},querySelector:get,getElementById:id=>get('#'+id),createElement:element},chrome:{tabs:{query:async()=>[{id:5}]},scripting:{executeScript:async({target,func})=>{calls++;assert.equal(target.tabId,5);if(captureWait)await captureWait;if(restricted)throw Error('restricted page');return [{result:vm.runInNewContext('('+func.toString()+')()',captureContext)}];}}}};
   vm.runInNewContext(bundle,context);
   return {get,copied,click:async id=>get(id).listeners.click(),calls:()=>calls,restrict:()=>{restricted=true;}};
 }
@@ -111,4 +111,25 @@ test('Popup message edits and new captures clear context, categories and feedbac
   assert.equal(p.get('#feedback-dialog').open,false);
   await p.click('#check');p.get('#context-sender').value='unrecognized';p.get('#context-sender').listeners.change();
   await p.click('#capture');assert.equal(p.get('#context-sender').value,'unknown');
+});
+
+test('A slow capture cannot overwrite a message edited and checked while waiting',async()=>{
+  let release;const captureWait=new Promise(resolve=>{release=resolve;});const p=popup({captureWait});
+  const pending=p.click('#capture');await new Promise(setImmediate);
+  p.get('#text').value='Send your OTP to me.';p.get('#text').listeners.input();await p.click('#check');
+  release();await pending;
+  assert.equal(p.get('#text').value,'Send your OTP to me.');
+  assert.match(p.get('#title').textContent,/Likely scam/);
+  assert.equal(p.get('#links').hidden,true);
+  assert.equal(p.get('#error').textContent,'');
+});
+
+test('A stale capture failure cannot replace a newer pasted-text result with an error',async()=>{
+  let release;const captureWait=new Promise(resolve=>{release=resolve;});const p=popup({captureWait});
+  const pending=p.click('#capture');await new Promise(setImmediate);
+  p.get('#text').value='Hello, see you for lunch tomorrow.';p.get('#text').listeners.input();await p.click('#check');
+  p.restrict();release();await pending;
+  assert.equal(p.get('#error').textContent,'');
+  assert.match(p.get('#title').textContent,/No obvious warning/);
+  assert.equal(p.get('#capture').disabled,false);
 });

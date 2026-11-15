@@ -44,6 +44,17 @@ test('Matching displayed address does not create a mismatch warning',()=>{
   const data=capture({text:'Read the school newsletter.',links:[anchor('https://www.school.example/news?ref=123','https://school.example')]});
   assert.equal(data.links[0].mismatch,false);assert.equal(checkCapture(data.text,data).verdict,'low');
 });
+test('Uppercase WWW labels still reveal a mismatched destination',()=>{
+  const data=capture({text:'Read this newsletter.',links:[anchor('https://attacker.example/path','WWW.BANK.EXAMPLE')]});
+  assert.equal(data.links[0].shownHost,'www.bank.example');
+  assert.equal(data.links[0].mismatch,true);
+  assert.equal(checkCapture(data.text,data).verdict,'caution');
+});
+test('Uppercase WWW labels do not flag matching destinations',()=>{
+  const data=capture({text:'Read this newsletter.',links:[anchor('https://school.example/path','WWW.SCHOOL.EXAMPLE')]});
+  assert.equal(data.links[0].shownHost,'www.school.example');
+  assert.equal(data.links[0].mismatch,false);
+});
 test('Credential-in-URL signal survives without returning credentials',()=>{
   const data=capture({text:'Read these account details.',links:[anchor('https://private-user:secret-password@attacker.example/path','Open') ]});
   assert.ok(!JSON.stringify(data).includes('private-user'));assert.ok(!JSON.stringify(data).includes('secret-password'));

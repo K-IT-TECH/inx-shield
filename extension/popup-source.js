@@ -6,7 +6,8 @@ import {labels,descriptions,actions} from '../src/i18n.js';
 import {captureMessage} from './capture.js';
 import {checkCapture} from './check-capture.js';
 const $=s=>document.querySelector(s);
-let lang=0, last=null, captured=null, status='', error='';
+let lang=0, last=null, captured=null, status='', error='', captureRevision=0;
+function cancelCapture(){captureRevision++;$('#capture').disabled=false;}
 const pick=a=>a[lang], pair=(en,ta)=>lang?ta:en;
 const feedback=connectFeedback({getContext:()=>last?{result:last,text:$('#text').value,source:captured?.kind==='gmail'?'email':'other'}:null,language:()=>lang?'ta':'en'});
 const insights=connectInsights({language:()=>lang?'ta':'en'});
@@ -64,19 +65,22 @@ $('#lang').addEventListener('change',()=>{
   feedback.translate();insights.translate();renderStatus();renderLinks();render();
 });
 $('#capture').addEventListener('click',async()=>{
+  const revision=++captureRevision;
   const button=$('#capture');button.disabled=true;
   resetDetails();last=null;captured=null;status='';error='';$('#text').value='';$('#result').hidden=true;renderLinks();renderStatus();
   try{
     const [tab]=await chrome.tabs.query({active:true,currentWindow:true});
+    if(revision!==captureRevision)return;
     const response=await chrome.scripting.executeScript({target:{tabId:tab.id},func:captureMessage});
+    if(revision!==captureRevision)return;
     const value=response[0]?.result;
     if(!value||value.error){error=Object.hasOwn(errors,value?.error)?value.error:'no_message';return;}
     captured=value;$('#text').value=value.text;status='captured';$('#text').focus();
-  }catch{error='restricted';}finally{button.disabled=false;renderStatus();renderLinks();}
+  }catch{if(revision===captureRevision)error='restricted';}finally{if(revision===captureRevision){button.disabled=false;renderStatus();renderLinks();}}
 });
-$('#text').addEventListener('input',()=>{resetDetails();if(captured)status='edited';captured=null;last=null;error='';$('#result').hidden=true;renderLinks();renderStatus();});
+$('#text').addEventListener('input',()=>{cancelCapture();resetDetails();if(captured)status='edited';captured=null;last=null;error='';$('#result').hidden=true;renderLinks();renderStatus();});
 $('#check').addEventListener('click',()=>{
-  resetDetails();last=null;$('#result').hidden=true;
+  cancelCapture();resetDetails();last=null;$('#result').hidden=true;
   try{
     if(!$('#text').value.trim()){error='empty';return;}
     last=checkCapture($('#text').value,captured);error='';render();$('#result').focus();

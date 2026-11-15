@@ -8,9 +8,16 @@ import { connectFeedback } from './feedback.js';
 import { connectSharing } from './share.js';
 import { createHistoryStore, filterHistory, normalizeHistory, HISTORY_KEY } from './history.js';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-let lang='en', result=null, toastTimer, installPrompt, account=null, cloudRows=[];
+let lang='en', result=null, toastTimer, installPrompt, account=null, cloudRows=[], inputError='';
+let accountEpoch=0, cloudRequest=0, authRevision=0, cloudSave=null;
 try { if(localStorage.getItem('inx-shield-language')==='ta')lang='ta'; } catch { /* Language still works without storage. */ }
 const t=(en,ta)=>lang==='ta'?ta:en, pick=a=>a[lang==='ta'?1:0];
+const inputErrors={
+  empty:['Paste a message first, or choose an example.','முதலில் message-ஐ paste செய்யுங்கள் அல்லது உதாரணத்தைத் தேர்வு செய்யுங்கள்.'],
+  too_long:['Please keep the message within 12,000 characters.','Message 12,000 எழுத்துகளுக்குள் இருக்க வேண்டும்.'],
+  failed:['This check could not finish. Refresh the page and try again. No result was saved.','இந்தச் சோதனையை முடிக்க முடியவில்லை. பக்கத்தை refresh செய்து மீண்டும் முயற்சியுங்கள். முடிவு சேமிக்கப்படவில்லை.']
+};
+function showInputError(code){inputError=code;$('#input-error').textContent=code?pick(inputErrors[code]):'';}
 const feedback=connectFeedback({getContext:()=>result?{result,text:$('#message').value,source:$('#source').value}:null,language:()=>lang});
 const insights=connectInsights({language:()=>lang,onChange:()=>{if('speechSynthesis' in window)speechSynthesis.cancel();}});
 const original=new Map($$('[data-i18n]').map(el=>[el,el.innerHTML]));
@@ -26,6 +33,7 @@ function writeHistory(rows){
 }
 function summary(){return {id:globalThis.crypto?.randomUUID?.() || 'check-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2),source:$('#source').value,verdict:result.verdict,reason_codes:result.reasons,engine_version:ENGINE_VERSION,created_at:new Date().toISOString()};}
 function historyRow(row,cloud=false){
+  const rowEpoch=accountEpoch;
   const item=document.createElement('details');
   item.className='history-row';
   item.dataset.historyId=row.id;
@@ -77,12 +85,14 @@ function historyRow(row,cloud=false){
   button.textContent=t('Delete this check','இந்தச் சோதனையை நீக்கு');
   button.setAttribute('aria-label',t('Delete saved check: ','சேமித்த சோதனையை நீக்கு: ')+pick(labels[row.verdict])+' · '+date);
   button.addEventListener('click',async()=>{
+    if(cloud&&rowEpoch!==accountEpoch)return;
     button.disabled=true;
     try{
       if(cloud){
         const {error}=await supabase.from('scan_summaries').delete().eq('id',row.id);
+        if(rowEpoch!==accountEpoch)return;
         if(error)throw error;
-        await loadCloud();
+        if(!await loadCloud())return;
         $('#refresh-cloud').focus();
       }else{
         if(!writeHistory(readHistory().filter(saved=>saved.id!==row.id)))return;
@@ -90,7 +100,7 @@ function historyRow(row,cloud=false){
         $('#history-count').focus({preventScroll:true});
       }
       toast(t('Saved check deleted.','சேமித்த சோதனை நீக்கப்பட்டது.'));
-    }catch{toast(t('Could not delete the cloud result. Try again.','Cloud முடிவை நீக்க முடியவில்லை. மீண்டும் முயற்சியுங்கள்.'));}
+    }catch{if(!cloud||rowEpoch===accountEpoch)toast(t('Could not delete the cloud result. Try again.','Cloud முடிவை நீக்க முடியவில்லை. மீண்டும் முயற்சியுங்கள்.'));}
     finally{button.disabled=false;}
   });
   body.append(description,why,reasons,next,note,button);
@@ -133,17 +143,17 @@ function renderHighlights(){
   $('#evidence-note').textContent=t('Tap a highlight to see why it was noticed. These are clues, not proof. This text is not saved.','குறிப்பிட்ட சொற்களைத் தொட்டு காரணத்தைப் பாருங்கள். இவை அறிகுறிகள் மட்டுமே; ஆதாரம் அல்ல. இந்த text சேமிக்கப்படாது.');
   renderEvidence($('#evidence-text'),$('#evidence-explanation'),$('#message').value,evidence,lang);
 }
-function renderResult(){if(!result)return;renderHighlights();insights.render($('#message').value,result);$('#result-empty').hidden=true;$('#result-content').hidden=false;$('#verdict-box').className='verdict '+result.verdict;$('#verdict-kicker').textContent=t('Your message check','உங்கள் message சோதனை');$('#verdict-title').textContent=pick(labels[result.verdict]);$('#verdict-copy').textContent=pick(descriptions[result.verdict]);$('#next-copy').textContent=pick(actions[result.verdict]);$('#reasons').replaceChildren();const reasons=result.reasons.length?result.reasons.map(k=>pick(REASONS[k])):[t('No supported warning patterns found in this text.','இந்த text-ல் ஆதரிக்கப்படும் எச்சரிக்கை அறிகுறிகள் தெரியவில்லை.')];if(result.verdict==='unclear')reasons.splice(0,reasons.length,t('The message is too short to give useful context.','போதுமான தகவல் பெற message மிகவும் குறுகியதாக உள்ளது.'));for(const reason of reasons){const li=document.createElement('li');li.textContent=reason;$('#reasons').append(li);}$('#link-details').hidden=!result.links.length;$('#link-list').replaceChildren();for(const host of result.links){const li=document.createElement('li');li.textContent=host;$('#link-list').append(li);}$('#save-cloud').disabled=false;}
-function resetResult(){feedback.reset();insights.reset();$('#evidence-text').replaceChildren();$('#evidence-explanation').textContent='';$('#evidence-details').hidden=true;$('#evidence-details').open=false;result=null;$('#result-empty').hidden=false;$('#result-content').hidden=true;$('#input-error').textContent='';$('#save-cloud').disabled=true;if('speechSynthesis'in window)speechSynthesis.cancel();}
+function renderResult(){if(!result)return;renderHighlights();insights.render($('#message').value,result);$('#result-empty').hidden=true;$('#result-content').hidden=false;$('#verdict-box').className='verdict '+result.verdict;$('#verdict-kicker').textContent=t('Your message check','உங்கள் message சோதனை');$('#verdict-title').textContent=pick(labels[result.verdict]);$('#verdict-copy').textContent=pick(descriptions[result.verdict]);$('#next-copy').textContent=pick(actions[result.verdict]);$('#reasons').replaceChildren();const reasons=result.reasons.length?result.reasons.map(k=>pick(REASONS[k])):[t('No supported warning patterns found in this text.','இந்த text-ல் ஆதரிக்கப்படும் எச்சரிக்கை அறிகுறிகள் தெரியவில்லை.')];if(result.verdict==='unclear')reasons.splice(0,reasons.length,t('The message is too short to give useful context.','போதுமான தகவல் பெற message மிகவும் குறுகியதாக உள்ளது.'));for(const reason of reasons){const li=document.createElement('li');li.textContent=reason;$('#reasons').append(li);}$('#link-details').hidden=!result.links.length;$('#link-list').replaceChildren();for(const host of result.links){const li=document.createElement('li');li.textContent=host;$('#link-list').append(li);}$('#save-cloud').disabled=!account||!!cloudSave;}
+function resetResult(){feedback.reset();insights.reset();$('#evidence-text').replaceChildren();$('#evidence-explanation').textContent='';$('#evidence-details').hidden=true;$('#evidence-details').open=false;result=null;$('#result-empty').hidden=false;$('#result-content').hidden=true;showInputError('');$('#save-cloud').disabled=true;if('speechSynthesis'in window)speechSynthesis.cancel();}
 function updateCount(){$('#char-count').textContent=`${$('#message').value.length.toLocaleString()} / 12,000`;}
-function setLanguage(value){lang=value;$('#language').value=value;try{localStorage.setItem('inx-shield-language',value);}catch{}document.documentElement.lang=value;$('.history-filters').setAttribute('aria-label',t('Filter device history','சாதன history-ஐ filter செய்'));for(const [el,en] of original){if(lang==='ta')el.textContent=ta[el.dataset.i18n]||el.textContent;else el.innerHTML=en;}$('#message').placeholder=t('Paste a message you’re unsure about…','சந்தேகமான message-ஐ இங்கே paste செய்யுங்கள்…');feedback.translate();insights.translate();renderResult();renderHistory();renderCloud();if('speechSynthesis'in window)speechSynthesis.cancel();}
+function setLanguage(value){lang=value;$('#language').value=value;try{localStorage.setItem('inx-shield-language',value);}catch{}document.documentElement.lang=value;$('.history-filters').setAttribute('aria-label',t('Filter device history','சாதன history-ஐ filter செய்'));for(const [el,en] of original){if(lang==='ta')el.textContent=ta[el.dataset.i18n]||el.textContent;else el.innerHTML=en;}$('#message').placeholder=t('Paste a message you’re unsure about…','சந்தேகமான message-ஐ இங்கே paste செய்யுங்கள்…');showInputError(inputError);feedback.translate();insights.translate();renderResult();renderHistory();renderCloud();if('speechSynthesis'in window)speechSynthesis.cancel();}
 $('#language').addEventListener('change',e=>setLanguage(e.target.value));
 $('#message').addEventListener('input',()=>{updateCount();resetResult();});$('#source').addEventListener('change',resetResult);
 $('#clear').addEventListener('click',()=>{$('#message').value='';resetResult();updateCount();$('#message').focus();});
 $('#analyze').addEventListener('click',()=>{
   resetResult();
   if(!$('#message').value.trim()){
-    $('#input-error').textContent=t('Paste a message first, or choose an example.','முதலில் message-ஐ paste செய்யுங்கள் அல்லது உதாரணத்தைத் தேர்வு செய்யுங்கள்.');
+    showInputError('empty');
     $('#message').focus();return;
   }
   try{
@@ -152,9 +162,7 @@ $('#analyze').addEventListener('click',()=>{
     if(innerWidth<681)$('#result-panel').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});
   }catch(error){
     resetResult();
-    $('#input-error').textContent=error instanceof RangeError
-      ?t('Please keep the message within 12,000 characters.','Message 12,000 எழுத்துகளுக்குள் இருக்க வேண்டும்.')
-      :t('This check could not finish. Refresh the page and try again. No result was saved.','இந்தச் சோதனையை முடிக்க முடியவில்லை. பக்கத்தை refresh செய்து மீண்டும் முயற்சியுங்கள். முடிவு சேமிக்கப்படவில்லை.');
+    showInputError(error instanceof RangeError?'too_long':'failed');
   }
 });
 $$('[data-sample]').forEach(button=>button.addEventListener('click',()=>{$('#message').value=pick(samples[button.dataset.sample]);resetResult();updateCount();$('#message').focus();}));
@@ -162,13 +170,83 @@ $('#save-local').addEventListener('click',()=>{if(!result)return;if(writeHistory
 $('#clear-history').addEventListener('click',()=>{if(confirm(t('Delete all result summaries saved on this device?','இந்த சாதனத்தில் சேமித்த அனைத்து முடிவுகளையும் நீக்கவா?'))&&writeHistory([])){resetHistoryFilters();toast(t('Device history deleted.','சாதன history நீக்கப்பட்டது.'));}});
 $('#export-history').addEventListener('click',()=>{const blob=new Blob([JSON.stringify({app:'INX Shield',exported_at:new Date().toISOString(),results:readHistory()},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='inx-shield-results.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
 $('#read-aloud').addEventListener('click',()=>{if(!result)return;if(!('speechSynthesis'in window)){toast(t('Read aloud is not supported by this browser.','இந்த browser-ல் வாசிக்கும் வசதி இல்லை.'));return;}speechSynthesis.cancel();const speech=new SpeechSynthesisUtterance([pick(labels[result.verdict]),pick(descriptions[result.verdict]),pick(actions[result.verdict])].join('. '));speech.lang=lang==='ta'?'ta-IN':'en-IN';speech.onerror=()=>toast(t('A suitable voice is unavailable on this device.','இந்த சாதனத்தில் தேவையான குரல் இல்லை.'));speechSynthesis.speak(speech);});
-function renderCloud(){const openIds=new Set([...$('#cloud-list').querySelectorAll('details[open]')].map(el=>el.dataset.historyId));$('#auth-form').hidden=!!account;$('#cloud-actions').hidden=!account;$('#account-label').textContent=account?t('Signed in: ','Sign in: ')+(account.email||''):'';$('#save-cloud').disabled=!result;$('#cloud-list').replaceChildren();if(account){if(!cloudRows.length){const p=document.createElement('p');p.className='fine';p.textContent=t('No cloud results yet.','Cloud முடிவுகள் இன்னும் இல்லை.');$('#cloud-list').append(p);}else cloudRows.forEach(r=>{const item=historyRow(r,true);item.open=openIds.has(r.id);$('#cloud-list').append(item);});}}
-async function loadCloud(){if(!account||!supabase)return;const {data,error}=await supabase.from('scan_summaries').select('id,created_at,source,verdict,reason_codes,engine_version').order('created_at',{ascending:false}).limit(100);if(error)throw error;cloudRows=normalizeHistory(data);renderCloud();}
-$('#auth-form').addEventListener('submit',async e=>{e.preventDefault();if(!supabase){$('#cloud-status').textContent=t('Cloud sign-in is unavailable in this browser. Device checks still work.','இந்த browser-ல் cloud sign-in கிடைக்கவில்லை. Device சோதனை வேலை செய்யும்.');return;}const button=e.submitter;button.disabled=true;$('#cloud-status').textContent=t('Signing in…','Sign in செய்கிறது…');try{const {data,error}=await supabase.auth.signInWithPassword({email:$('#email').value.trim(),password:$('#password').value});if(error)throw error;account=data.user;$('#password').value='';await loadCloud();$('#cloud-status').textContent=t('Private cloud history connected. Nothing saves automatically.','Private cloud history இணைந்துள்ளது. எதுவும் தானாகச் சேமிக்காது.');}catch{$('#cloud-status').textContent=t('Could not sign in. Check your pilot account details or connection. Public registration is not open yet.','Sign in செய்ய முடியவில்லை. Pilot account தகவல் அல்லது இணையத்தைச் சரிபாருங்கள். Public registration இன்னும் தொடங்கவில்லை.');}finally{button.disabled=false;renderCloud();}});
-$('#save-cloud').addEventListener('click',async()=>{if(!account||!result)return;const button=$('#save-cloud');button.disabled=true;try{const s=summary();const {error}=await supabase.from('scan_summaries').insert({source:s.source,verdict:s.verdict,reason_codes:s.reason_codes,engine_version:s.engine_version});if(error)throw error;await loadCloud();toast(t('Summary saved privately to cloud. Message not uploaded.','முடிவு மட்டும் cloud-ல் சேமிக்கப்பட்டது. Message upload ஆகவில்லை.'));}catch{toast(t('Cloud save failed. You can still save on this device.','Cloud-ல் சேமிக்க முடியவில்லை. இந்த சாதனத்தில் சேமிக்கலாம்.'));}finally{button.disabled=false;}});
-$('#refresh-cloud').addEventListener('click',async()=>{try{await loadCloud();toast(t('Cloud history refreshed.','Cloud history புதுப்பிக்கப்பட்டது.'));}catch{toast(t('Could not load cloud history. Check your connection.','Cloud history பெற முடியவில்லை. இணையத்தைச் சரிபாருங்கள்.'));}});
-$('#sign-out').addEventListener('click',async()=>{const {error}=await supabase.auth.signOut({scope:'local'});if(error){toast(t('Could not sign out. Please retry.','Sign out செய்ய முடியவில்லை. மீண்டும் முயற்சியுங்கள்.'));return;}account=null;cloudRows=[];renderCloud();$('#cloud-status').textContent=t('Signed out on this device.','இந்த சாதனத்தில் sign out செய்யப்பட்டது.');});
-if(supabase){supabase.auth.getSession().then(async({data})=>{account=data.session?.user||null;renderCloud();if(account)try{await loadCloud();}catch{ $('#cloud-status').textContent=t('Cloud history could not be loaded. Retry when online.','Cloud history பெற முடியவில்லை. இணையம் வந்ததும் முயற்சியுங்கள்.');}}).catch(()=>{});supabase.auth.onAuthStateChange((_event,session)=>{account=session?.user||null;if(!account)cloudRows=[];renderCloud();});}
+function renderCloud(){const openIds=new Set([...$('#cloud-list').querySelectorAll('details[open]')].map(el=>el.dataset.historyId));$('#auth-form').hidden=!!account;$('#cloud-actions').hidden=!account;$('#account-label').textContent=account?t('Signed in: ','Sign in: ')+(account.email||''):'';$('#save-cloud').disabled=!account||!result||!!cloudSave;$('#cloud-list').replaceChildren();if(account){if(!cloudRows.length){const p=document.createElement('p');p.className='fine';p.textContent=t('No cloud results yet.','Cloud முடிவுகள் இன்னும் இல்லை.');$('#cloud-list').append(p);}else cloudRows.forEach(r=>{const item=historyRow(r,true);item.open=openIds.has(r.id);$('#cloud-list').append(item);});}}
+// Every request belongs to an account generation. A sign-out/sign-in cycle,
+// including returning to the same account, invalidates the earlier responses.
+function setAccount(user){
+  if(account?.id!==user?.id){accountEpoch++;cloudRequest++;cloudRows=[];cloudSave=null;}
+  account=user;
+  renderCloud();
+}
+async function loadCloud(){
+  if(!account||!supabase)return false;
+  const epoch=accountEpoch,request=++cloudRequest;
+  try{
+    const {data,error}=await supabase.from('scan_summaries').select('id,created_at,source,verdict,reason_codes,engine_version').order('created_at',{ascending:false}).limit(100);
+    if(epoch!==accountEpoch||request!==cloudRequest)return false;
+    if(error)throw error;
+    cloudRows=normalizeHistory(data);renderCloud();
+    $('#cloud-status').textContent=t('Private cloud history connected. Nothing saves automatically.','Private cloud history இணைந்துள்ளது. எதுவும் தானாகச் சேமிக்காது.');
+    return true;
+  }catch(error){if(epoch!==accountEpoch||request!==cloudRequest)return false;throw error;}
+}
+$('#auth-form').addEventListener('submit',async e=>{
+  e.preventDefault();
+  if(!supabase){$('#cloud-status').textContent=t('Cloud sign-in is unavailable in this browser. Device checks still work.','இந்த browser-ல் cloud sign-in கிடைக்கவில்லை. Device சோதனை வேலை செய்யும்.');return;}
+  const button=e.submitter,revision=authRevision;let signedInEpoch=null;button.disabled=true;
+  $('#cloud-status').textContent=t('Signing in…','Sign in செய்கிறது…');
+  try{
+    const {data,error}=await supabase.auth.signInWithPassword({email:$('#email').value.trim(),password:$('#password').value});
+    if(error)throw error;
+    if(authRevision!==revision&&account?.id!==data.user?.id)return;
+    setAccount(data.user);signedInEpoch=accountEpoch;$('#password').value='';
+    await loadCloud();
+  }catch{if(signedInEpoch!==null&&signedInEpoch===accountEpoch)$('#cloud-status').textContent=t('Signed in, but cloud history could not be loaded. Use Refresh to retry.','Sign in ஆனது; cloud history பெற முடியவில்லை. Refresh மூலம் மீண்டும் முயற்சியுங்கள்.');else if(authRevision===revision)$('#cloud-status').textContent=t('Could not sign in. Check your pilot account details or connection. Public registration is not open yet.','Sign in செய்ய முடியவில்லை. Pilot account தகவல் அல்லது இணையத்தைச் சரிபாருங்கள். Public registration இன்னும் தொடங்கவில்லை.');}
+  finally{button.disabled=false;renderCloud();}
+});
+$('#save-cloud').addEventListener('click',async()=>{
+  if(!account||!result||cloudSave)return;
+  const epoch=accountEpoch,token=Symbol('save');cloudSave=token;$('#save-cloud').disabled=true;
+  try{
+    const s=summary();const {error}=await supabase.from('scan_summaries').insert({source:s.source,verdict:s.verdict,reason_codes:s.reason_codes,engine_version:s.engine_version});
+    if(epoch!==accountEpoch)return;
+    if(error)throw error;
+    if(await loadCloud())toast(t('Summary saved privately to cloud. Message not uploaded.','முடிவு மட்டும் cloud-ல் சேமிக்கப்பட்டது. Message upload ஆகவில்லை.'));
+  }catch{if(epoch===accountEpoch)toast(t('Cloud save failed. You can still save on this device.','Cloud-ல் சேமிக்க முடியவில்லை. இந்த சாதனத்தில் சேமிக்கலாம்.'));}
+  finally{if(cloudSave===token){cloudSave=null;$('#save-cloud').disabled=!account||!result;}}
+});
+$('#refresh-cloud').addEventListener('click',async()=>{
+  try{if(await loadCloud())toast(t('Cloud history refreshed.','Cloud history புதுப்பிக்கப்பட்டது.'));}
+  catch{toast(t('Could not load cloud history. Check your connection.','Cloud history பெற முடியவில்லை. இணையத்தைச் சரிபாருங்கள்.'));}
+});
+$('#sign-out').addEventListener('click',async()=>{
+  if(!supabase||!account)return;
+  const epoch=accountEpoch;
+  try{
+    const {error}=await supabase.auth.signOut({scope:'local'});if(error)throw error;
+    if(account&&epoch!==accountEpoch)return;
+    setAccount(null);$('#cloud-status').textContent=t('Signed out on this device.','இந்த சாதனத்தில் sign out செய்யப்பட்டது.');
+  }catch{if(epoch===accountEpoch)toast(t('Could not sign out. Please retry.','Sign out செய்ய முடியவில்லை. மீண்டும் முயற்சியுங்கள்.'));}
+});
+if(supabase){
+  const initialRevision=authRevision;
+  supabase.auth.getSession().then(async({data})=>{
+    if(authRevision!==initialRevision)return;
+    setAccount(data.session?.user||null);
+    const epoch=accountEpoch;
+    if(account)try{await loadCloud();}catch{if(epoch===accountEpoch)$('#cloud-status').textContent=t('Cloud history could not be loaded. Retry when online.','Cloud history பெற முடியவில்லை. இணையம் வந்ததும் முயற்சியுங்கள்.');}
+  }).catch(()=>{});
+  supabase.auth.onAuthStateChange((_event,session)=>{
+    authRevision++;
+    const changed=account?.id!==session?.user?.id;
+    setAccount(session?.user||null);
+    // Keep Supabase's callback synchronous. Fetch after its auth lock releases.
+    if(changed&&account){const epoch=accountEpoch;setTimeout(async()=>{
+      if(epoch!==accountEpoch)return;
+      try{await loadCloud();}catch{if(epoch===accountEpoch)$('#cloud-status').textContent=t('Cloud history could not be loaded. Retry when online.','Cloud history பெற முடியவில்லை. இணையம் வந்ததும் முயற்சியுங்கள்.');}
+    },0);}
+  });
+}
 window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installPrompt=event;});$('#install').addEventListener('click',async()=>{if(installPrompt){await installPrompt.prompt();installPrompt=null;}else $('#install-dialog').showModal();});$('#close-install').addEventListener('click',()=>$('#install-dialog').close());
 connectSharing({
   language:()=>lang,

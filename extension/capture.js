@@ -36,7 +36,7 @@ export function captureMessage() {
       const displayedUrl = label.match(/^(?:https?:\/\/|www\.)[^\s<>"']+$/iu)?.[0];
       let shownHost = '';
       if (displayedUrl) {
-        try { shownHost = new URL(displayedUrl.startsWith('www.') ? 'https://' + displayedUrl : displayedUrl).hostname; } catch { /* Not a URL label. */ }
+        try { shownHost = new URL(/^www\./iu.test(displayedUrl) ? 'https://' + displayedUrl : displayedUrl).hostname; } catch { /* Not a URL label. */ }
       }
       // Drop paths, queries, fragments and credentials before leaving the page.
       const href = url.protocol + '//' + (url.username || url.password ? 'redacted@' : '') + url.host;

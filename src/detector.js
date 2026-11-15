@@ -1,6 +1,6 @@
 import { normalizeMessage, messageClauses } from './message-text.js';
 
-export const ENGINE_VERSION = 'rules-1.4.0';
+export const ENGINE_VERSION = 'rules-1.4.1';
 export const MAX_LENGTH = 12000;
 
 // Bounded, explainable patterns. This is not a trained language model.
@@ -43,8 +43,15 @@ function isAdvice(clause, match, previousEnd, id) {
   if (['credentials', 'payment'].includes(id) && /\b(?:we|i|app|system|bank)\s+(?:will|can)\s+(?:automatically\s+)?$/iu.test(before) && /^(?:send|give|transfer|wire|remit|lend)\b/iu.test(phrase)) return true;
   return false;
 }
-function negatedThreat(text) {
-  return /\b(?:not|never|no longer|isn't|isnt|won't|wont)(?:\s+be)?\s+(?:blocked|block|suspended|suspend|deactivated|closed|arrested)\b|முடக்கப்படாது|செயலிழக்காது|கைது இல்லை|block aagathu|block aagadhu/iu.test(text);
+function negatedThreat(phrase, after) {
+  // Scope English negation to the status actually matched. A later "not
+  // suspended" must not hide "account is blocked" earlier in the same clause.
+  if (/\b(?:not|never|no longer|isn't|isnt|aren't|arent|wasn't|wasnt|weren't|werent|won't|wont|hasn't|hasnt|haven't|havent|hadn't|hadnt)(?:\s+(?:be|been|being|yet|ever|currently))*\s+(?:blocked|block|suspended|suspend|deactivated|deactivate|closed|close)$/iu.test(phrase)) return true;
+  // These languages put the negation after the matched verb stem.
+  if (/block$/iu.test(phrase) && /^\s+aaga(?:thu|dhu)\b/iu.test(after)) return true;
+  if (/முடக்க$/u.test(phrase) && /^ப்படாது/u.test(after)) return true;
+  if (/செயலிழ$/u.test(phrase) && /^க்காது/u.test(after)) return true;
+  return /கைது$/u.test(phrase) && /^\s+இல்லை/u.test(after);
 }
 
 export function analyze(input, { links: capturedLinks = [], includeEvidence = false } = {}) {
@@ -69,7 +76,7 @@ export function analyze(input, { links: capturedLinks = [], includeEvidence = fa
       for (const match of section.text.matchAll(new RegExp(rule.pattern.source, 'gisu'))) {
         const ignored = (rule.request && isAdvice(section.text, match, previousEnd, rule.id))
           || (rule.request && previousAdvice && /^\s*(?:or|and)\s*$/iu.test(section.text.slice(previousEnd, match.index)))
-          || (rule.id === 'threat' && negatedThreat(section.text.slice(match.index, match.index + match[0].length + 20)));
+          || (rule.id === 'threat' && negatedThreat(match[0], section.text.slice(match.index + match[0].length, match.index + match[0].length + 20)));
         previousEnd = match.index + match[0].length;
         previousAdvice = ignored;
         if (ignored) continue;

@@ -1,6 +1,6 @@
 # Detection challenge results
 
-Engine: `rules-1.4.0`. Dataset: INX Shield synthetic challenge set 1.
+Engine: `rules-1.4.1`. Dataset: INX Shield synthetic challenge set 1.
 
 Synthetic, author-labelled development challenge set; not a held-out or independently validated real-world accuracy estimate. A warning means scam OR caution. Ambiguous examples are excluded from precision/recall and false-alarm rates. Context answers are not used.
 
