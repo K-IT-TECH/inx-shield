@@ -2,6 +2,8 @@
 
 Audit completed locally on 15 November 2026. This is a bounded code, automated-test and browser audit, not a guarantee that no bugs or undetected scams remain.
 
+Release published on 15 November 2026; production status and live regression evidence rechecked on 17 November 2026.
+
 ## Reproduced defects and corrections
 
 | Area | Before | Corrected behavior |
@@ -52,4 +54,14 @@ The two misses are indirect Tamil/Tanglish family-impersonation money requests. 
 
 ## Publication
 
-Local verification is complete. Release commit and production verification are recorded below after publication.
+- Live app: [INX Shield](https://inx-shield.vercel.app/).
+- Published GitHub source commit: [`066e545200c5b1af60caa740477d8642941cb69a`](https://github.com/K-IT-TECH/inx-shield/commit/066e545200c5b1af60caa740477d8642941cb69a). Source tree `ac2c0001209c6627beb6ba827f5edda341eeb94a` matches the locally verified release.
+- Vercel production deployment `dpl_qB5Vxd9fzAQQQJzzRaKqdNHhSqrg` was published on 15 November. On 17 November it remained `READY`, associated with that source commit and the public alias, with no alias error.
+- Live checks on 15 November confirmed translated validation, the corrected negative/positive account-status behavior, request highlights, Tamil guidance, feedback metadata showing `rules-1.4.1`, and sample sharing. On 17 November, `Your account is blocked, not suspended.` again produced **Some warning signs** with the account/identity-threat explanation. No application-origin warning/error appeared in the inspected live browser logs; browser-automation extension messages were excluded.
+- The extension downloaded from the live app on 17 November matched the local release ZIP byte for byte (82,339 bytes; SHA-256 `dc30bb7fe1181e9e820d654f2af9f694f9a46cd1652e4ddc605e4c5f5fcb7de4`). CRC validation passed, and every archive entry matched. This verifies delivery of the package, not installation into a real Gmail session.
+- Supabase remained `ACTIVE_HEALTHY` on 17 November. The deployment-scoped error/fatal runtime-log query for the 30-minute window ending 15:18 UTC returned no entries; this is a limited observation, not continuous monitoring or proof that every client succeeds.
+- This final publication record and screenshot are documentation-only additions after the app release; they do not require a new application deployment.
+
+### Live regression evidence — 17 November 2026
+
+![Live app showing the corrected account-status warning](images/audit-1.4.1.jpg)

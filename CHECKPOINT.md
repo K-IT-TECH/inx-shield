@@ -6,7 +6,8 @@
 - 208 tests pass; build, ZIP integrity and dependency audit pass (0 known dependency vulnerabilities). Desktop and 320/390/768px browser checks, summary-only history export, reviewed feedback and final-build sample sharing passed. See [audit report](docs/AUDIT_1_4_1.md).
 - Resumed the existing inactive Supabase project and verified ACTIVE_HEALTHY. Read-only checks confirmed owner RLS, no anonymous grants, no authenticated UPDATE, and no security-advisor lints. No schema, account, auth or permission changes.
 - Frozen synthetic evaluation remains 22/24 scam warnings, two misses and six benign cautions. Exact original user examples and physical Android/Gmail/pilot-account acceptance remain unverified.
-- Local release candidate: app/extension 1.4.1, engine rules-1.4.1. Publication evidence follows after deployment.
+- Published app/extension 1.4.1 and engine rules-1.4.1 on 15 November from GitHub commit `066e545200c5b1af60caa740477d8642941cb69a`, tree `ac2c0001209c6627beb6ba827f5edda341eeb94a` matching the locally verified release. Production deployment `dpl_qB5Vxd9fzAQQQJzzRaKqdNHhSqrg` remained READY at https://inx-shield.vercel.app/ on 17 November with the correct source commit and no alias error.
+- Live regression checks confirmed corrected account-status warnings, translated validation, request highlights, Tamil guidance, versioned feedback and sample sharing. On 17 November the downloaded extension matched the local release ZIP byte for byte and passed CRC checks; Supabase remained ACTIVE_HEALTHY. Final publication evidence and a live screenshot are in the [audit report](docs/AUDIT_1_4_1.md). These final documentation-only additions do not change the deployed application.
 
 ## Context, categories and evaluation 1.4.0 — 12 November 2026
 
