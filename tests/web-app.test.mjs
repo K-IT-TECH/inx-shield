@@ -1,6 +1,22 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {webApp} from './helpers/web-app.mjs';
+import { samples } from '../src/i18n.js';
+
+test('Web renders new-number guidance bilingually and stores only existing summary fields', async () => {
+  const app=webApp();await app.input('#message',samples.newnumber[1]);await app.click('#analyze');
+  assert.match(app.get('#verdict-title').textContent,/Some warning signs/);
+  assert.match(app.get('#category-list').children[0].children[0].textContent,/New-number/);
+  await app.change('#language','ta');
+  assert.match(app.get('#category-list').children[0].children[0].textContent,/புதிய எண்ணிலிருந்து/);
+  await app.click('#save-local');await app.click('#export-history');
+  const json=await app.blobs.get(app.downloads[0].href).text();const row=JSON.parse(json).results[0];
+  assert.equal(row.verdict,'caution');assert.deepEqual(row.reason_codes,['payment']);
+  assert.doesNotMatch(json,/அம்மா|போன்|evidence|changed_contact/);
+  await app.input('#message',samples.fee[1]);await app.click('#analyze');
+  assert.match(app.get('#verdict-title').textContent,/வெளிப்படையான எச்சரிக்கை இல்லை/);
+  assert.equal(app.get('#category-panel').hidden,true);
+});
 
 test('Web validation errors translate immediately and clear when the message changes',async()=>{
   const app=webApp();await app.click('#analyze');

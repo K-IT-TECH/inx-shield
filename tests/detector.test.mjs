@@ -1,7 +1,7 @@
 import test from 'node:test';import assert from 'node:assert/strict';
 import {analyze,MAX_LENGTH} from '../src/detector.js';
 import {samples} from '../src/i18n.js';
-for(const [name,verdict] of [['bank','scam'],['prize','scam'],['ad','promotion'],['normal','low']])for(const [lang,input]of samples[name].entries())test(`${name} sample (${lang?'Tamil':'English'})`,()=>assert.equal(analyze(input).verdict,verdict));
+for(const [name,verdict] of [['bank','scam'],['prize','scam'],['ad','promotion'],['normal','low'],['newnumber','caution'],['fee','low']])for(const [lang,input]of samples[name].entries())test(`${name} sample (${lang?'Tamil':'English'})`,()=>assert.equal(analyze(input).verdict,verdict));
 test('OTP request triggers scam',()=>assert.equal(analyze('Please share your OTP so we can help you.').verdict,'scam'));
 test('Negated OTP safety advice is not an OTP request',()=>assert.equal(analyze('Never share your OTP with anyone.').verdict,'low'));
 test('Tamil negated advice',()=>assert.equal(analyze('OTP யாரிடமும் பகிர வேண்டாம்.').verdict,'low'));

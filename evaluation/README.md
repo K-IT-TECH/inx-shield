@@ -22,16 +22,31 @@ No private messages were used. The two messages originally reported as missed we
 
 ## Baseline comparison
 
-| Same 60-case dataset | rules-1.3.0 | rules-1.4.0 |
-| --- | ---: | ---: |
-| Scam scenarios receiving a warning | 21 / 24 | 22 / 24 |
-| Missed scam scenarios | 3 | 2 |
-| Benign scenarios receiving a warning | 6 / 24 | 6 / 24 |
-| Ambiguous scenarios, excluded from rates | 12 | 12 |
+| Same 60-case dataset | rules-1.3.0 | rules-1.4.1 | rules-1.5.0 |
+| --- | ---: | ---: | ---: |
+| Scam scenarios receiving a warning | 21 / 24 | 22 / 24 | 24 / 24 |
+| Missed scam scenarios | 3 | 2 | 0 |
+| Benign scenarios receiving a warning | 6 / 24 | 6 / 24 | 3 / 24 |
+| Ambiguous scenarios, excluded from rates | 12 | 12 | 12 |
 
-All six current false alarms are cautions: three legitimate fee reminders and three genuine short-link newsletters. Two indirect family-impersonation requests in Tamil/Tanglish remain missed. Context answers can prompt independent verification when a person recognizes a money request, but they do not repair the detector's measured miss.
+Version 1.5.0 warns on the two previously missed indirect Tamil/Tanglish family-impersonation requests. Three explicit school/college office fee reminders no longer receive caution when no remote payment cue or stronger warning is present. All three remaining false alarms are cautions on genuine short-link newsletters: wording cannot establish the hidden destination, so the warning remains. No cases or labels were changed. These are tuned development examples; zero misses here does not establish that unfamiliar scams will be caught.
 
 The unchanged case-file SHA-256 is recorded in both [baseline-1.3.0.json](baseline-1.3.0.json) and [current.json](current.json). [BASELINE_1_3.md](BASELINE_1_3.md) and [RESULTS.md](RESULTS.md) list every miss, false alarm and ambiguous case. To compare another detector checkout, use `node scripts/evaluate.mjs --detector /absolute/path/to/src/detector.js --output /path/to/report.json`.
+
+## Expanded development set — 17 November 2026
+
+An additional [60 scenarios](expanded/cases.json) were authored before changing the 1.4.1 detector, then run and frozen with SHA-256 `84ce7cc7487547d987c65ac52dcc715f8df86a62237fcb6bdf15be5c5015315e`. Each language has eight scam, eight benign and four ambiguous cases. The same implementer wrote and reviewed these cases while developing 1.5.0; they are **not blind, independent or held-out**. They focus on changed-contact stories, colloquial money requests, negation, explicit in-person fees and hostile instructions mixed with office wording.
+
+Run `npm run evaluate:expanded`. The script also accepts `--cases /path/to/cases.json` for a separate dataset. [Expanded baseline](expanded/BASELINE_1_4_1.md) and [current results](expanded/RESULTS.md) retain every outcome.
+
+| Expanded set | rules-1.4.1 | rules-1.5.0 |
+| --- | ---: | ---: |
+| Scam scenarios receiving a warning | 13 / 24 | 24 / 24 |
+| Missed scam scenarios | 11 | 0 |
+| Benign scenarios receiving a warning | 12 / 24 | 3 / 24 |
+| Ambiguous scenarios, excluded from rates | 12 | 12 |
+
+Both sets contain related templates. Do not pool them into an independent accuracy claim. [baseline-1.4.1.json](baseline-1.4.1.json) preserves the original-set pre-change output; all original and expanded source cases remain byte-for-byte unchanged after their baseline runs.
 
 ## Next evaluation work
 

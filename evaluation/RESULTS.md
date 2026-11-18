@@ -1,6 +1,6 @@
 # Detection challenge results
 
-Engine: `rules-1.4.1`. Dataset: INX Shield synthetic challenge set 1.
+Engine: `rules-1.5.0`. Dataset: INX Shield synthetic challenge set 1.
 
 Synthetic, author-labelled development challenge set; not a held-out or independently validated real-world accuracy estimate. A warning means scam OR caution. Ambiguous examples are excluded from precision/recall and false-alarm rates. Context answers are not used.
 
@@ -8,37 +8,24 @@ Dataset SHA-256: `486c8ea5c829dd6f7310fb61e8512e66345177020ed5e5a8c671ce70eab250
 
 | Group | Scam warnings / scams | Missed scams | False alarms / benign | Warning recall | False-alarm rate |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| overall | 22/24 | 2 | 6/24 | 91.7% | 25.0% |
-| en | 8/8 | 0 | 2/8 | 100.0% | 25.0% |
-| ta | 7/8 | 1 | 2/8 | 87.5% | 25.0% |
-| tanglish | 7/8 | 1 | 2/8 | 87.5% | 25.0% |
+| overall | 24/24 | 0 | 3/24 | 100.0% | 12.5% |
+| en | 8/8 | 0 | 1/8 | 100.0% | 12.5% |
+| ta | 8/8 | 0 | 1/8 | 100.0% | 12.5% |
+| tanglish | 8/8 | 0 | 1/8 | 100.0% | 12.5% |
 
-Warning precision: 78.6%. Likely-scam-only precision: 100.0%. These describe only the labelled synthetic cases.
+Warning precision: 88.9%. Likely-scam-only precision: 100.0%. These describe only the labelled synthetic cases.
 
 ## Missed scam examples
 
-- **ta-scam-07** (ta; low): அம்மா, என் பழைய போன் உடைந்துவிட்டது. இது என் புதிய எண். நண்பருக்கு உதவி செய்ய பணம் வேண்டும்.
-  - Label rationale: Synthetic family impersonation with an indirect money request.
-
-- **tanglish-scam-07** (tanglish; low): Amma old phone damage. Idhu new number. Friend ku konjam cash venum help pannunga.
-  - Label rationale: Synthetic indirect family impersonation request.
+None in this set.
 
 ## False alarms
-
-- **en-benign-06** (en; caution): Please pay the tuition fee at the school office this week.
-  - Label rationale: Synthetic legitimate tuition reminder; deliberate fee false-alarm challenge.
 
 - **en-benign-07** (en; caution): Here is the school newsletter: https://bit.ly/class-letter
   - Label rationale: Synthetic genuine newsletter; short-link caution is a deliberate false-alarm challenge.
 
-- **ta-benign-06** (ta; caution): பள்ளி அலுவலகத்தில் கல்வி கட்டணம் செலுத்துங்கள்.
-  - Label rationale: Synthetic legitimate tuition reminder; fee false-alarm challenge.
-
 - **ta-benign-07** (ta; caution): பள்ளி செய்திகளை இங்கே படியுங்கள்: https://bit.ly/school-ta
   - Label rationale: Synthetic genuine newsletter; short-link false-alarm challenge.
-
-- **tanglish-benign-06** (tanglish; caution): College exam fee kattunga, office counter la receipt vangikonga.
-  - Label rationale: Synthetic legitimate college fee reminder; false-alarm challenge.
 
 - **tanglish-benign-07** (tanglish; caution): School newsletter inga iruku https://bit.ly/class-tanglish
   - Label rationale: Synthetic genuine newsletter; short-link false-alarm challenge.

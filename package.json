@@ -1,6 +1,6 @@
 {
   "name": "inx-shield",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -9,7 +9,8 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "test": "node --test tests/*.test.mjs",
-    "evaluate": "node scripts/evaluate.mjs --output evaluation/current.json --markdown evaluation/RESULTS.md"
+    "evaluate": "node scripts/evaluate.mjs --output evaluation/current.json --markdown evaluation/RESULTS.md",
+    "evaluate:expanded": "node scripts/evaluate.mjs --cases evaluation/expanded/cases.json --output evaluation/expanded/current.json --markdown evaluation/expanded/RESULTS.md"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.118.0"

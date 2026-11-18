@@ -1,8 +1,10 @@
 import { normalizeMessage } from './message-text.js';
 import { MAX_LENGTH } from './detector.js';
+import { hasChangedContactPayment } from './payment-context.js';
 
 // Labels describe matched patterns, not verified scam identities. Never persist text here.
 export const CATEGORIES = {
+  changed_contact: { label: ['New-number money request', 'புதிய எண்ணிலிருந்து பணக் கோரிக்கை'], detail: ['A changed-number or broken-phone story appears near a money request. Call the person on a previously known number before paying; this message cannot establish who is speaking.', 'புதிய எண் அல்லது பழுதான போன் பற்றிய தகவலுடன் பணக் கோரிக்கை உள்ளது. பணம் அனுப்பும் முன் ஏற்கனவே தெரிந்த எண்ணில் அந்த நபரை அழையுங்கள்; இந்த message மூலம் அடையாளத்தை உறுதிப்படுத்த முடியாது.'] },
   job: { label: ['Job / task fee request', 'வேலை / task கட்டணக் கோரிக்கை'], detail: ['A job or task offer appears alongside a payment request. Verify the employer independently before paying.', 'வேலை அல்லது task தகவலுடன் பணக் கோரிக்கை உள்ளது. பணம் செலுத்தும் முன் நிறுவனத்தைத் தனியாக உறுதிப்படுத்துங்கள்.'] },
   delivery: { label: ['Delivery fee request', 'பார்சல் கட்டணக் கோரிக்கை'], detail: ['Delivery wording appears with a fee request. Check the order in the delivery service’s official app.', 'பார்சல் தகவலுடன் கட்டணக் கோரிக்கை உள்ளது. Delivery நிறுவனத்தின் official app-ல் order-ஐச் சரிபாருங்கள்.'] },
   account: { label: ['Account / identity threat', 'கணக்கு / அடையாள மிரட்டல்'], detail: ['The message threatens an account, card, SIM or identity-related action. Verify it through a known contact.', 'கணக்கு, கார்டு, SIM அல்லது அடையாளம் தொடர்பாக மிரட்டுகிறது. நம்பகமான தொடர்பு வழியாக உறுதிப்படுத்துங்கள்.'] },
@@ -27,6 +29,7 @@ export function classifyPatterns(input, result) {
   const { text } = normalizeMessage(input);
   const has = id => result.reasons.includes(id);
   const ids = [];
+  if (has('payment') && hasChangedContactPayment(text)) ids.push('changed_contact');
   if (has('payment') && topics.job.test(text)) ids.push('job');
   if (has('payment') && topics.delivery.test(text)) ids.push('delivery');
   if (has('threat') && topics.account.test(text)) ids.push('account');
@@ -34,7 +37,7 @@ export function classifyPatterns(input, result) {
   if (has('prize') && topics.investment.test(text)) ids.push('investment');
   if (has('remote')) ids.push('remote');
   if (has('credentials')) ids.push('credentials');
-  if (has('payment') && !ids.some(id => ['job', 'delivery', 'prize', 'investment'].includes(id))) ids.push('payment');
+  if (has('payment') && !ids.some(id => ['job', 'delivery', 'prize', 'investment', 'changed_contact'].includes(id))) ids.push('payment');
   return ids;
 }
 

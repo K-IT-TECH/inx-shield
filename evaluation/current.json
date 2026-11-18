@@ -1,7 +1,7 @@
 {
   "dataset": "INX Shield synthetic challenge set 1",
   "datasetSha256": "486c8ea5c829dd6f7310fb61e8512e66345177020ed5e5a8c671ce70eab2506f",
-  "engine": "rules-1.4.1",
+  "engine": "rules-1.5.0",
   "provenance": "60 synthetic examples authored for development on 2026-11-12 before candidate implementation. Scenario labels are author judgements, not verified user reports. No private messages or real links. This is not an independent holdout set.",
   "interpretation": "Synthetic, author-labelled development challenge set; not a held-out or independently validated real-world accuracy estimate. A warning means scam OR caution. Ambiguous examples are excluded from precision/recall and false-alarm rates. Context answers are not used.",
   "overall": {
@@ -9,13 +9,13 @@
     "scams": 24,
     "benign": 24,
     "ambiguous": 12,
-    "scamWarnings": 22,
-    "missedScams": 2,
-    "falseAlarms": 6,
-    "benignWithoutWarning": 18,
-    "warningRecall": 0.9166666666666666,
-    "falseAlarmRate": 0.25,
-    "warningPrecision": 0.7857142857142857,
+    "scamWarnings": 24,
+    "missedScams": 0,
+    "falseAlarms": 3,
+    "benignWithoutWarning": 21,
+    "warningRecall": 1,
+    "falseAlarmRate": 0.125,
+    "warningPrecision": 0.8888888888888888,
     "likelyScamPrecision": 1
   },
   "byLanguage": {
@@ -26,11 +26,11 @@
       "ambiguous": 4,
       "scamWarnings": 8,
       "missedScams": 0,
-      "falseAlarms": 2,
-      "benignWithoutWarning": 6,
+      "falseAlarms": 1,
+      "benignWithoutWarning": 7,
       "warningRecall": 1,
-      "falseAlarmRate": 0.25,
-      "warningPrecision": 0.8,
+      "falseAlarmRate": 0.125,
+      "warningPrecision": 0.8888888888888888,
       "likelyScamPrecision": 1
     },
     "ta": {
@@ -38,13 +38,13 @@
       "scams": 8,
       "benign": 8,
       "ambiguous": 4,
-      "scamWarnings": 7,
-      "missedScams": 1,
-      "falseAlarms": 2,
-      "benignWithoutWarning": 6,
-      "warningRecall": 0.875,
-      "falseAlarmRate": 0.25,
-      "warningPrecision": 0.7777777777777778,
+      "scamWarnings": 8,
+      "missedScams": 0,
+      "falseAlarms": 1,
+      "benignWithoutWarning": 7,
+      "warningRecall": 1,
+      "falseAlarmRate": 0.125,
+      "warningPrecision": 0.8888888888888888,
       "likelyScamPrecision": 1
     },
     "tanglish": {
@@ -52,13 +52,13 @@
       "scams": 8,
       "benign": 8,
       "ambiguous": 4,
-      "scamWarnings": 7,
-      "missedScams": 1,
-      "falseAlarms": 2,
-      "benignWithoutWarning": 6,
-      "warningRecall": 0.875,
-      "falseAlarmRate": 0.25,
-      "warningPrecision": 0.7777777777777778,
+      "scamWarnings": 8,
+      "missedScams": 0,
+      "falseAlarms": 1,
+      "benignWithoutWarning": 7,
+      "warningRecall": 1,
+      "falseAlarmRate": 0.125,
+      "warningPrecision": 0.8888888888888888,
       "likelyScamPrecision": 1
     }
   },
@@ -224,8 +224,8 @@
       "label": "benign",
       "text": "Please pay the tuition fee at the school office this week.",
       "rationale": "Synthetic legitimate tuition reminder; deliberate fee false-alarm challenge.",
-      "verdict": "caution",
-      "warning": true,
+      "verdict": "low",
+      "warning": false,
       "reasons": [
         "payment"
       ]
@@ -376,9 +376,11 @@
       "label": "scam",
       "text": "அம்மா, என் பழைய போன் உடைந்துவிட்டது. இது என் புதிய எண். நண்பருக்கு உதவி செய்ய பணம் வேண்டும்.",
       "rationale": "Synthetic family impersonation with an indirect money request.",
-      "verdict": "low",
-      "warning": false,
-      "reasons": []
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
     },
     {
       "id": "ta-scam-08",
@@ -453,8 +455,8 @@
       "label": "benign",
       "text": "பள்ளி அலுவலகத்தில் கல்வி கட்டணம் செலுத்துங்கள்.",
       "rationale": "Synthetic legitimate tuition reminder; fee false-alarm challenge.",
-      "verdict": "caution",
-      "warning": true,
+      "verdict": "low",
+      "warning": false,
       "reasons": [
         "payment"
       ]
@@ -605,9 +607,11 @@
       "label": "scam",
       "text": "Amma old phone damage. Idhu new number. Friend ku konjam cash venum help pannunga.",
       "rationale": "Synthetic indirect family impersonation request.",
-      "verdict": "low",
-      "warning": false,
-      "reasons": []
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
     },
     {
       "id": "tanglish-scam-08",
@@ -682,8 +686,8 @@
       "label": "benign",
       "text": "College exam fee kattunga, office counter la receipt vangikonga.",
       "rationale": "Synthetic legitimate college fee reminder; false-alarm challenge.",
-      "verdict": "caution",
-      "warning": true,
+      "verdict": "low",
+      "warning": false,
       "reasons": [
         "payment"
       ]

@@ -7,11 +7,11 @@ import { scoreOutcomes as metrics } from '../evaluation/metrics.mjs';
 const args = process.argv.slice(2);
 const options = {};
 for (let i = 0; i < args.length; i += 2) {
-  if (!['--detector', '--output', '--markdown'].includes(args[i]) || !args[i + 1]) throw new Error('Use --detector, --output or --markdown with a path');
+  if (!['--detector', '--cases', '--output', '--markdown'].includes(args[i]) || !args[i + 1]) throw new Error('Use --detector, --cases, --output or --markdown with a path');
   options[args[i]] = args[i + 1];
 }
 const { analyze, ENGINE_VERSION } = await import(pathToFileURL(resolve(options['--detector'] || 'src/detector.js')));
-const raw = await readFile(new URL('../evaluation/cases.json', import.meta.url), 'utf8');
+const raw = await readFile(options['--cases'] ? resolve(options['--cases']) : new URL('../evaluation/cases.json', import.meta.url), 'utf8');
 const dataset = JSON.parse(raw);
 const ids = new Set();
 const outcomes = dataset.cases.map(row => {

@@ -1,0 +1,737 @@
+{
+  "dataset": "INX Shield synthetic expansion set 2",
+  "datasetSha256": "84ce7cc7487547d987c65ac52dcc715f8df86a62237fcb6bdf15be5c5015315e",
+  "engine": "rules-1.4.1",
+  "provenance": "60 synthetic author-labelled scenarios written on 17 November 2026 before changing the 1.4.1 detector. Frozen for before/after comparison by the same implementer; development evaluation, not an independent holdout or real-world accuracy sample.",
+  "interpretation": "Synthetic, author-labelled development challenge set; not a held-out or independently validated real-world accuracy estimate. A warning means scam OR caution. Ambiguous examples are excluded from precision/recall and false-alarm rates. Context answers are not used.",
+  "overall": {
+    "total": 60,
+    "scams": 24,
+    "benign": 24,
+    "ambiguous": 12,
+    "scamWarnings": 13,
+    "missedScams": 11,
+    "falseAlarms": 12,
+    "benignWithoutWarning": 12,
+    "warningRecall": 0.5416666666666666,
+    "falseAlarmRate": 0.5,
+    "warningPrecision": 0.52,
+    "likelyScamPrecision": 1
+  },
+  "byLanguage": {
+    "en": {
+      "total": 20,
+      "scams": 8,
+      "benign": 8,
+      "ambiguous": 4,
+      "scamWarnings": 5,
+      "missedScams": 3,
+      "falseAlarms": 4,
+      "benignWithoutWarning": 4,
+      "warningRecall": 0.625,
+      "falseAlarmRate": 0.5,
+      "warningPrecision": 0.5555555555555556,
+      "likelyScamPrecision": 1
+    },
+    "ta": {
+      "total": 20,
+      "scams": 8,
+      "benign": 8,
+      "ambiguous": 4,
+      "scamWarnings": 4,
+      "missedScams": 4,
+      "falseAlarms": 4,
+      "benignWithoutWarning": 4,
+      "warningRecall": 0.5,
+      "falseAlarmRate": 0.5,
+      "warningPrecision": 0.5,
+      "likelyScamPrecision": 1
+    },
+    "tanglish": {
+      "total": 20,
+      "scams": 8,
+      "benign": 8,
+      "ambiguous": 4,
+      "scamWarnings": 4,
+      "missedScams": 4,
+      "falseAlarms": 4,
+      "benignWithoutWarning": 4,
+      "warningRecall": 0.5,
+      "falseAlarmRate": 0.5,
+      "warningPrecision": 0.5,
+      "likelyScamPrecision": 1
+    }
+  },
+  "outcomes": [
+    {
+      "id": "en-scam-01",
+      "language": "en",
+      "label": "scam",
+      "text": "Mum, this is my replacement number. My handset broke and I need some money for a repair.",
+      "rationale": "Fictional impostor uses a changed-number story and an indirect money request.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "en-scam-02",
+      "language": "en",
+      "label": "scam",
+      "text": "Dad, I lost my phone. Can you help me with some cash for the hospital?",
+      "rationale": "Fictional family impostor asks indirectly for cash.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "en-scam-03",
+      "language": "en",
+      "label": "scam",
+      "text": "Hello sister, new mobile number here. I need funds for a bill; please help me.",
+      "rationale": "Fictional changed-number money request.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "en-scam-04",
+      "language": "en",
+      "label": "scam",
+      "text": "Could you transfer some cash to my colleague for the booking?",
+      "rationale": "Fictional impostor gives a direct transfer request.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "en-scam-05",
+      "language": "en",
+      "label": "scam",
+      "text": "Pay the tuition fee at the school office. Also send money to my personal account.",
+      "rationale": "In-person wording is followed by a separate remote payment request.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "en-scam-06",
+      "language": "en",
+      "label": "scam",
+      "text": "Pay the course fee at the college counter using gift cards.",
+      "rationale": "An office reference must not excuse gift-card payment.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "en-scam-07",
+      "language": "en",
+      "label": "scam",
+      "text": "School fee reminder: pay at the office, then send your OTP to me.",
+      "rationale": "A benign-looking reminder includes a secret request.",
+      "verdict": "scam",
+      "warning": true,
+      "reasons": [
+        "credentials",
+        "payment"
+      ]
+    },
+    {
+      "id": "en-scam-08",
+      "language": "en",
+      "label": "scam",
+      "text": "School newsletter: https://bit.ly/verify-class. Enter your password to read it.",
+      "rationale": "A newsletter label must not excuse a hidden link and password request.",
+      "verdict": "scam",
+      "warning": true,
+      "reasons": [
+        "credentials",
+        "short_link",
+        "link"
+      ]
+    },
+    {
+      "id": "en-benign-01",
+      "language": "en",
+      "label": "benign",
+      "text": "Please pay the tuition fee at the college office on Friday.",
+      "rationale": "Fictional legitimate in-person tuition payment reminder.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "en-benign-02",
+      "language": "en",
+      "label": "benign",
+      "text": "Pay the library fee in person at the school counter and collect a receipt.",
+      "rationale": "Fictional legitimate in-person fee with receipt.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "en-benign-03",
+      "language": "en",
+      "label": "benign",
+      "text": "At the college office, pay the exam fee tomorrow.",
+      "rationale": "Fictional legitimate counter payment with the place before the request.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "en-benign-04",
+      "language": "en",
+      "label": "benign",
+      "text": "Mum, this is my new mobile number. Are we meeting for dinner?",
+      "rationale": "Changed number without a sensitive request.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "en-benign-05",
+      "language": "en",
+      "label": "benign",
+      "text": "We will send cash after the reimbursement is approved.",
+      "rationale": "Sender promise, not a request to the recipient.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "en-benign-06",
+      "language": "en",
+      "label": "benign",
+      "text": "Do not send money to someone claiming to use a new number.",
+      "rationale": "Safety advice discouraging a payment.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "en-benign-07",
+      "language": "en",
+      "label": "benign",
+      "text": "Your school fee receipt can be collected from reception.",
+      "rationale": "Receipt collection, not a new payment request.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "en-benign-08",
+      "language": "en",
+      "label": "benign",
+      "text": "Read this week's school newsletter: https://bit.ly/campus-notes",
+      "rationale": "Fictional genuine shortened-link newsletter; cautious result still counts as a false alarm.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "short_link",
+        "link"
+      ]
+    },
+    {
+      "id": "en-ambiguous-01",
+      "language": "en",
+      "label": "ambiguous",
+      "text": "I need money for a new laptop.",
+      "rationale": "Personal statement; recipient action and identity are unknown.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "en-ambiguous-02",
+      "language": "en",
+      "label": "ambiguous",
+      "text": "Mum, this is my new number. I need cash for rent.",
+      "rationale": "Could be genuine or impersonation; wording justifies verification but identity is unknown.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "en-ambiguous-03",
+      "language": "en",
+      "label": "ambiguous",
+      "text": "Pay your tuition online at https://college.example/pay.",
+      "rationale": "Message alone cannot authenticate this payment destination.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": [
+        "link"
+      ]
+    },
+    {
+      "id": "en-ambiguous-04",
+      "language": "en",
+      "label": "ambiguous",
+      "text": "Please help with my bill.",
+      "rationale": "Nature of help and surrounding conversation are unknown.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "ta-scam-01",
+      "language": "ta",
+      "label": "scam",
+      "text": "அப்பா, இது என் புதிய எண். போன் தொலைந்துவிட்டது. செலவுக்கு கொஞ்சம் பணம் வேண்டும்.",
+      "rationale": "Fictional Tamil family impostor uses new-number and money-need wording.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "ta-scam-02",
+      "language": "ta",
+      "label": "scam",
+      "text": "அம்மா, பழைய போன் உடைந்துவிட்டது. இது புது நம்பர். நண்பருக்கு உதவ பணம் தேவை.",
+      "rationale": "Fictional broken-phone story with an indirect money request.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "ta-scam-03",
+      "language": "ta",
+      "label": "scam",
+      "text": "அக்கா, இந்த புதிய எண்ணில் பேசுகிறேன். கொஞ்சம் காசு வேணும், உதவி பண்ணுங்க.",
+      "rationale": "Fictional Tamil changed-contact request using colloquial cash wording.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "ta-scam-04",
+      "language": "ta",
+      "label": "scam",
+      "text": "எனக்கு பணத்தை அனுப்புங்கள், பதிவு முடிக்க வேண்டும்.",
+      "rationale": "Fictional scam request using inflected Tamil money wording.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "ta-scam-05",
+      "language": "ta",
+      "label": "scam",
+      "text": "பள்ளி அலுவலகத்தில் கட்டணம் செலுத்துங்கள். பிறகு எனக்கு பணம் அனுப்புங்கள்.",
+      "rationale": "In-person reminder followed by a separate transfer request.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "ta-scam-06",
+      "language": "ta",
+      "label": "scam",
+      "text": "கல்லூரி அலுவலகத்தில் கட்டணம் செலுத்த இந்த link பயன்படுத்துங்கள்: https://fees.example/pay",
+      "rationale": "Fictional online diversion; office words must not remove payment caution.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment",
+        "link"
+      ]
+    },
+    {
+      "id": "ta-scam-07",
+      "language": "ta",
+      "label": "scam",
+      "text": "பள்ளி அலுவலகத்தில் கட்டணம் செலுத்துங்கள், உங்கள் OTP எனக்கு அனுப்புங்கள்.",
+      "rationale": "Fee reminder with a secret-code request.",
+      "verdict": "scam",
+      "warning": true,
+      "reasons": [
+        "credentials",
+        "payment"
+      ]
+    },
+    {
+      "id": "ta-scam-08",
+      "language": "ta",
+      "label": "scam",
+      "text": "பள்ளி அறிவிப்பு https://bit.ly/class-check. கடவுச்சொல் சொல்லுங்கள்.",
+      "rationale": "Newsletter wording with a hidden link and secret request.",
+      "verdict": "scam",
+      "warning": true,
+      "reasons": [
+        "credentials",
+        "short_link",
+        "link"
+      ]
+    },
+    {
+      "id": "ta-benign-01",
+      "language": "ta",
+      "label": "benign",
+      "text": "பள்ளி அலுவலகத்தில் கல்விக் கட்டணம் செலுத்துங்கள்.",
+      "rationale": "Fictional legitimate fee at a school office.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "ta-benign-02",
+      "language": "ta",
+      "label": "benign",
+      "text": "கல்லூரி அலுவலகத்தில் தேர்வுக் கட்டணத்தை செலுத்துங்கள்.",
+      "rationale": "Fictional legitimate exam fee paid at the college office.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "ta-benign-03",
+      "language": "ta",
+      "label": "benign",
+      "text": "பள்ளி அலுவலகத்தில் கட்டணம் செலுத்தி ரசீது பெறுங்கள்.",
+      "rationale": "Fictional legitimate in-person fee and receipt.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "ta-benign-04",
+      "language": "ta",
+      "label": "benign",
+      "text": "அம்மா, இது என் புதிய எண். நாளை வீட்டுக்கு வருகிறேன்.",
+      "rationale": "Changed number without a money or secret request.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "ta-benign-05",
+      "language": "ta",
+      "label": "benign",
+      "text": "புதிய எண்ணில் யாராவது கேட்டால் பணம் அனுப்ப வேண்டாம்.",
+      "rationale": "Tamil safety advice, not a payment request.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "ta-benign-06",
+      "language": "ta",
+      "label": "benign",
+      "text": "உங்களுக்கு பணம் தேவையில்லை; புத்தகம் நாளை கிடைக்கும்.",
+      "rationale": "Negated need, without a request.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "ta-benign-07",
+      "language": "ta",
+      "label": "benign",
+      "text": "கல்விக் கட்டண ரசீது அலுவலகத்தில் உள்ளது.",
+      "rationale": "Receipt collection, not a payment request.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "ta-benign-08",
+      "language": "ta",
+      "label": "benign",
+      "text": "பள்ளி வாரச் செய்திகள்: https://bit.ly/campus-tamil",
+      "rationale": "Fictional genuine shortened-link newsletter; caution counts as a false alarm.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "short_link",
+        "link"
+      ]
+    },
+    {
+      "id": "ta-ambiguous-01",
+      "language": "ta",
+      "label": "ambiguous",
+      "text": "எனக்கு வீட்டுச் செலவுக்கு பணம் வேண்டும்.",
+      "rationale": "Money need without enough identity or recipient-action context.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "ta-ambiguous-02",
+      "language": "ta",
+      "label": "ambiguous",
+      "text": "அப்பா, இது என் புதிய எண். வாடகைக்கு பணம் வேண்டும்.",
+      "rationale": "Could be a genuine relative or an impostor.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "ta-ambiguous-03",
+      "language": "ta",
+      "label": "ambiguous",
+      "text": "கல்விக் கட்டணத்தை https://college.example/fees இங்கே செலுத்துங்கள்.",
+      "rationale": "Message cannot authenticate the online payment destination.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": [
+        "link"
+      ]
+    },
+    {
+      "id": "ta-ambiguous-04",
+      "language": "ta",
+      "label": "ambiguous",
+      "text": "எனக்கு ஒரு உதவி செய்ய முடியுமா?",
+      "rationale": "The requested action has not been stated.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "tanglish-scam-01",
+      "language": "tanglish",
+      "label": "scam",
+      "text": "Appa idhu en new number. Old phone broken. Konjam panam venum.",
+      "rationale": "Fictional family impostor using Tanglish money-need wording.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "tanglish-scam-02",
+      "language": "tanglish",
+      "label": "scam",
+      "text": "Amma pudhu number idhu. Friend ku kaasu thevai, help pannunga.",
+      "rationale": "Fictional changed-number request with a spelling variant.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "tanglish-scam-03",
+      "language": "tanglish",
+      "label": "scam",
+      "text": "Akka phone tholainjuruchu, new mobile number. Cash venum help pannunga.",
+      "rationale": "Fictional lost-phone story and indirect cash request.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "tanglish-scam-04",
+      "language": "tanglish",
+      "label": "scam",
+      "text": "Enakku cash transfer pannunga for registration.",
+      "rationale": "Fictional remote transfer request with money-before-verb order.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "tanglish-scam-05",
+      "language": "tanglish",
+      "label": "scam",
+      "text": "College office la fee kattunga. Apram kaasu anuppunga to me.",
+      "rationale": "In-person reminder followed by a separate money request.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "tanglish-scam-06",
+      "language": "tanglish",
+      "label": "scam",
+      "text": "College counter la fee kattunga using gift cards.",
+      "rationale": "Office wording combined with unusual payment method.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "tanglish-scam-07",
+      "language": "tanglish",
+      "label": "scam",
+      "text": "School office la fee kattunga, unga OTP sollunga.",
+      "rationale": "Fee reminder with a secret request.",
+      "verdict": "scam",
+      "warning": true,
+      "reasons": [
+        "credentials",
+        "payment"
+      ]
+    },
+    {
+      "id": "tanglish-scam-08",
+      "language": "tanglish",
+      "label": "scam",
+      "text": "School newsletter https://bit.ly/class-help. Password sollunga to continue.",
+      "rationale": "Newsletter disguise with a password request.",
+      "verdict": "scam",
+      "warning": true,
+      "reasons": [
+        "credentials",
+        "short_link",
+        "link"
+      ]
+    },
+    {
+      "id": "tanglish-benign-01",
+      "language": "tanglish",
+      "label": "benign",
+      "text": "School office la exam fee kattunga, receipt vangikonga.",
+      "rationale": "Fictional legitimate school office fee reminder.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "tanglish-benign-02",
+      "language": "tanglish",
+      "label": "benign",
+      "text": "College fee office counter la seluthunga.",
+      "rationale": "Fictional legitimate counter payment with reversed word order.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "tanglish-benign-03",
+      "language": "tanglish",
+      "label": "benign",
+      "text": "College office counter la fees pay pannunga.",
+      "rationale": "Fictional legitimate office payment with plural fees.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment"
+      ]
+    },
+    {
+      "id": "tanglish-benign-04",
+      "language": "tanglish",
+      "label": "benign",
+      "text": "Amma idhu en pudhu number. Sunday lunch ku varen.",
+      "rationale": "New contact information without a sensitive action.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "tanglish-benign-05",
+      "language": "tanglish",
+      "label": "benign",
+      "text": "Unknown number ku kaasu anuppatheenga.",
+      "rationale": "Safety advice discouraging payment.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "tanglish-benign-06",
+      "language": "tanglish",
+      "label": "benign",
+      "text": "Enakku panam vendaam, notebook mattum kondu vaanga.",
+      "rationale": "Negated money need.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "tanglish-benign-07",
+      "language": "tanglish",
+      "label": "benign",
+      "text": "School fee receipt office la ready ah iruku.",
+      "rationale": "Receipt collection, no payment request.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "tanglish-benign-08",
+      "language": "tanglish",
+      "label": "benign",
+      "text": "School weekly news inga: https://bit.ly/campus-tanglish",
+      "rationale": "Fictional genuine short-link newsletter; caution counts as a false alarm.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "short_link",
+        "link"
+      ]
+    },
+    {
+      "id": "tanglish-ambiguous-01",
+      "language": "tanglish",
+      "label": "ambiguous",
+      "text": "Enakku laptop vaanga cash venum.",
+      "rationale": "Personal money need with unknown action and identity.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "tanglish-ambiguous-02",
+      "language": "tanglish",
+      "label": "ambiguous",
+      "text": "Amma new number idhu. Rent ku panam venum.",
+      "rationale": "Could be genuine family communication or impersonation.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    },
+    {
+      "id": "tanglish-ambiguous-03",
+      "language": "tanglish",
+      "label": "ambiguous",
+      "text": "College fees online la pay pannunga https://college.example/fee",
+      "rationale": "Payment destination is unauthenticated.",
+      "verdict": "caution",
+      "warning": true,
+      "reasons": [
+        "payment",
+        "link"
+      ]
+    },
+    {
+      "id": "tanglish-ambiguous-04",
+      "language": "tanglish",
+      "label": "ambiguous",
+      "text": "Bro konjam help pannunga.",
+      "rationale": "The type of help is unstated.",
+      "verdict": "low",
+      "warning": false,
+      "reasons": []
+    }
+  ]
+}

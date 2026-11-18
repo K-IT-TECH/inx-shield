@@ -6,9 +6,10 @@ A clean, accessible English/Tamil message checker. People can paste a suspicious
 
 - Real local analysis of arbitrary text with explainable English, Tamil and some Tanglish rules. Five results: likely scam, caution, promotional, no obvious warning signs, insufficient context.
 - Highlighted phrases show the exact text behind a matched rule. Tap or keyboard-activate a highlight for its English/Tamil explanation. The offset-only evidence is temporary and never added to saved history.
-- Possible scam-pattern labels explain job/task fees, delivery fees, account threats, prize claims, easy-money investment offers, remote access, secret-code and payment requests. They describe wording, not verified identities.
+- Possible scam-pattern labels explain changed-number money requests, job/task fees, delivery fees, account threats, prize claims, easy-money investment offers, remote access, secret-code and payment requests. They describe wording, not verified identities.
+- Indirect English/Tamil/Tanglish money requests can receive caution when accompanied by a nearby changed-contact story or request for help. Explicit school/college office fee reminders retain payment information without a warning by themselves; links, remote payment cues and stronger requests keep their warnings. New-number and fee-reminder examples make both behaviours easy to try.
 - Optional English/Tamil context questions add practical guidance about expected messages, familiar senders and requests for money, secrets or access. They never lower the text verdict. Answers clear on a new message/source/capture and are excluded from history and feedback.
-- A reproducible 60-case synthetic evaluation records baseline/current results, misses and false alarms; see [evaluation methodology](evaluation/README.md). It is not a real-world accuracy claim.
+- Two reproducible 60-case synthetic development sets record baseline/current results, misses and false alarms; see [evaluation methodology](evaluation/README.md). These related, author-labelled cases are not an independent or real-world accuracy estimate.
 - **Wrong result?** prepares a metadata-only feedback report by default. An optional example is automatically masked for common identifiers, then editable and subject to explicit review. Copy or download the report; a separate link opens a blank public GitHub issue form for manual submission. No automatic feedback uploads or training.
 - Accessible responsive interface, keyboard navigation, screen-reader labels, reduced-motion support, read aloud when the device has a suitable voice, and practical help.
 - Optional device history: reopen saved reasons and next steps, combine result/source filters, delete individual summaries, and export all saved checks as JSON. Keeps the latest 100 summaries. Saves only verdict, source, time, rule IDs and engine version; never message bodies, OTPs, email addresses, phone numbers or links.
@@ -24,6 +25,7 @@ Requires Node 22 or later.
 npm ci
 npm test
 npm run evaluate
+npm run evaluate:expanded
 npm run build
 ```
 
@@ -55,7 +57,7 @@ This is an **explainable rule-based detector**, not a trained machine-learning m
 
 ## Verification
 
-`npm test` covers indirect and misspelled code requests, Tamil/Tanglish variants, offset-correct Unicode highlights, scoped negation, metadata-only feedback, masking and review gates, stale-draft cleanup, arbitrary messages, bilingual samples, short secret-code requests, disguised initialisms, scoped safety-advice exemptions, fee/threat cautions, scheme-less domain/path links, negation, benign links, unsafe URL forms, Unicode obfuscation, input limits, copied extension capture functions, hidden-link mismatches, ambiguous email selection, one-use/expired share delivery, worker startup failure, offline navigation, query-free cache keys, history filtering/deletion, legacy records, storage failures and summary-only exports. Build creates the website, PWA assets and extension ZIP without external CDN dependencies. See [1.4.1 full-app audit](docs/AUDIT_1_4_1.md), [1.4.0 guidance verification](docs/FEATURES_1_4_VERIFICATION.md), [1.3.0 feature verification](docs/FEATURES_1_3_VERIFICATION.md), [detection regression verification](docs/DETECTION_VERIFICATION.md), [history update verification](docs/HISTORY_VERIFICATION.md) and `CHECKPOINT.md` for delivery evidence and outstanding physical-device tests.
+`npm test` covers indirect and misspelled code requests, Tamil/Tanglish variants, offset-correct Unicode highlights, scoped negation, metadata-only feedback, masking and review gates, stale-draft cleanup, arbitrary messages, bilingual samples, short secret-code requests, disguised initialisms, scoped safety-advice exemptions, fee/threat cautions, scheme-less domain/path links, negation, benign links, unsafe URL forms, Unicode obfuscation, input limits, copied extension capture functions, hidden-link mismatches, ambiguous email selection, one-use/expired share delivery, worker startup failure, offline navigation, query-free cache keys, history filtering/deletion, legacy records, storage failures and summary-only exports. Build creates the website, PWA assets and extension ZIP without external CDN dependencies. See [1.5.0 detection improvements](docs/IMPROVEMENTS_1_5.md), [1.4.1 full-app audit](docs/AUDIT_1_4_1.md), [1.4.0 guidance verification](docs/FEATURES_1_4_VERIFICATION.md), [1.3.0 feature verification](docs/FEATURES_1_3_VERIFICATION.md), [detection regression verification](docs/DETECTION_VERIFICATION.md), [history update verification](docs/HISTORY_VERIFICATION.md) and `CHECKPOINT.md` for delivery evidence and outstanding physical-device tests.
 
 The earlier inline mockup was not present in the resumed workspace. This repository contains the implemented version of that design; it does not claim to contain an exact archival copy of the lost preview file.
 

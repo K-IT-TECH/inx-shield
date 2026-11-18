@@ -4,6 +4,17 @@ import vm from 'node:vm';
 import {build} from 'esbuild';
 const {outputFiles}=await build({entryPoints:['extension/popup-source.js'],bundle:true,minify:true,format:'iife',target:'es2022',write:false});
 const bundle=outputFiles[0].text;
+
+test('Bundled extension shares the new money rules and translated guidance', async () => {
+  const p=popup();p.get('#text').value='Amma idhu new number. Konjam cash venum.';await p.click('#check');
+  assert.match(p.get('#title').textContent,/Some warning signs/);
+  assert.match(p.get('#category-list').children[0].children[0].textContent,/New-number/);
+  p.get('#lang').value='ta';p.get('#lang').listeners.change();
+  assert.match(p.get('#category-list').children[0].children[0].textContent,/புதிய எண்ணிலிருந்து/);
+  p.get('#text').value='School office la exam fee kattunga.';p.get('#text').listeners.input();await p.click('#check');
+  assert.match(p.get('#title').textContent,/வெளிப்படையான எச்சரிக்கை இல்லை/);
+  assert.equal(p.get('#category-panel').hidden,true);
+});
 function popup({captureWait=null}={}){
   const elements=new Map();
   const element=()=>({value:'',textContent:'',hidden:true,open:false,checked:false,children:[],listeners:{},setAttribute(key,value){this[key]=value;},showModal(){this.open=true;},close(){this.open=false;this.listeners.close?.();},addEventListener(type,fn){this.listeners[type]=fn;},replaceChildren(){this.children=[];},append(child){this.children.push(child);},focus(){}});

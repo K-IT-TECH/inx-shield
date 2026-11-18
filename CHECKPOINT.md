@@ -1,5 +1,12 @@
 # Delivery checkpoint
 
+## Detection improvements 1.5.0 — 18 November 2026
+
+- Added bounded English/Tamil/Tanglish indirect money-request context, more direct money-request variants and a bilingual new-number explanation. Explicit in-person school/college fee reminders avoid an automatic caution while keeping the payment explanation; remote cues, links and separate stronger requests retain warnings.
+- 263 tests pass (55 added); build and extension ZIP checks pass. Browser checks covered bilingual explanations/highlights, unchanged strong warnings, summary-only save/export, feedback metadata and narrow web/extension layouts. See [1.5.0 verification](docs/IMPROVEMENTS_1_5.md).
+- Original frozen 60-case set: scam warnings 22/24 → 24/24; benign cautions 6/24 → 3/24. An additional frozen 60-case development set improved 13/24 → 24/24 scam warnings and 12/24 → 3/24 benign cautions. These related synthetic sets are not blind/independent evaluations or real-world accuracy estimates. Remaining cautions concern shortened links.
+- App/extension 1.5.0; engine rules-1.5.0. No new service, database, auth or permission changes. Physical Android/Gmail/pilot-account and independent-user acceptance remain rollout work. Publication evidence follows after deployment.
+
 ## Audit fixes 1.4.1 — 15 November 2026
 
 - Fixed bilingual validation, account-threat negation scope, uppercase WWW link-label comparison, stale extension captures, cloud account/refresh races, sign-out error handling and duplicate/pending-save state.
