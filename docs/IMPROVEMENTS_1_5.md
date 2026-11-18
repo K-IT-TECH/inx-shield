@@ -51,4 +51,12 @@ Existing extension installations need the new ZIP files and **Reload** on their 
 
 ## Publication
 
-Release commit and production verification will be recorded after deployment.
+Published on **18 November 2026** to [the live app](https://inx-shield.vercel.app/) from GitHub source commit `3f5c4b351d458a0cc974b17a630287d49e2fbb5f`. Its tree `465431a9c36094ca16b6107f36048f9eb9b10168` matches the locally tested release.
+
+- Production deployment `dpl_2JY7CzC9GrKwrMktjUVvsEvcYdm3` is READY with the correct source commit, the public alias attached and no alias error.
+- Live browser checks confirmed English and Tamil indirect money-request cautions, the translated new-number explanation, a neutral in-person fee reminder and an OTP request mixed with fee wording still returning likely scam. Default feedback included `rules-1.5.0` without the test message. No application-origin warning/error appeared in the inspected live logs; browser-automation extension logs were excluded.
+- The extension downloaded through the live page is 86,908 bytes, identifies as version 1.5.0, passes ZIP CRC checks and matches the final local archive byte for byte. SHA-256: `b288021490ca943a0f3d0d1100731b9b8ea14c683ce65fbd826d0c6a97874c19`.
+
+![Live 1.5.0 showing an indirect new-number money request and its caution explanation](images/live-1.5.jpg)
+
+The final publication report, checkpoint and screenshot are documentation-only additions after the deployed source commit; they do not change application behaviour. Device and independent-evaluation limits above still apply.
